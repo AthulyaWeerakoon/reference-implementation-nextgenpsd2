@@ -6,6 +6,7 @@ import com.wso2.openbanking.berlin.extensions.enums.ConsentTypeEnum;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.configurations.ConfigurableProperties;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
 import com.wso2.openbanking.berlin.extensions.model.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -18,7 +19,7 @@ import java.util.Optional;
 /**
  * Consent handler for account consents
  */
-public class AccountConsentHandler implements ConsentHandler {
+public class AccountConsentHandler implements ConsentHandler, ConsentResponseHandler {
     private static final Log log = LogFactory.getLog(AccountConsentHandler.class);
 
     /**
@@ -111,5 +112,20 @@ public class AccountConsentHandler implements ConsentHandler {
             // Append response data to response
             validationResponse.setData(data);
         }
+    }
+
+    /**
+     * Handles account consent creation response customization
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void enrichCreationResponse(EnrichConsentCreationRequestBody requestBody,
+                                       SuccessResponseForResponseAlternation validationResponse)
+            throws ServerException {
+        ConsentInitiationUtil.buildResponseAlterationResponseForConsentCreation(requestBody, validationResponse,
+                ConsentTypeEnum.ACCOUNTS.toString());
     }
 }

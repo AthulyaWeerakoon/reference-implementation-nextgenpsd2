@@ -161,6 +161,16 @@ public class CommonConsentValidationUtil {
     }
 
     /**
+     * Method to get the Consent Manage Service Handler.
+     *
+     * @param requestPath Request path of the request
+     * @return ServiceHandler
+     */
+    public static ConsentResponseHandler getConsentResponseHandler(String requestPath) {
+        return (ConsentResponseHandler) getConsentHandler(requestPath);
+    }
+
+    /**
      * Used to get the consent type an authorisation request.
      *
      * @param requestPath authorisation request path string
@@ -638,4 +648,5 @@ public class CommonConsentValidationUtil {
                     String.format("%s SCA Approach is not supported", ScaApproachEnum.DECOUPLED)));
         }
     }
+
 }

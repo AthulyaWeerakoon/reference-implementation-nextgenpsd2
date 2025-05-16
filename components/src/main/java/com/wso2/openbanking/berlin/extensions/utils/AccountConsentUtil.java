@@ -1,10 +1,12 @@
 package com.wso2.openbanking.berlin.extensions.utils;
 
 import com.wso2.openbanking.berlin.extensions.configurations.ConfigurableProperties;
+import com.wso2.openbanking.berlin.extensions.datamodels.ScaMethod;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.enums.AccessMethodEnum;
 import com.wso2.openbanking.berlin.extensions.enums.PermissionEnum;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.model.StoredDetailedConsentResourceData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 /**
  * Utility class for Account consent management
@@ -134,6 +137,31 @@ public class AccountConsentUtil {
         }
 
         return permission;
+    }
+
+    /**
+     * Method to get the account initiation response without links.
+     *
+     * @param createdConsent the created consent
+     * @param scaMethods     decided SCA methods
+     * @return the constructed initiation response without links
+     */
+    public static void appendAccountInitiationResponseToPayload(StoredDetailedConsentResourceData createdConsent,
+                                                                ArrayList<ScaMethod> scaMethods, JSONObject payload) {
+
+        payload.put(ConsentExtensionConstants.CONSENT_STATUS, createdConsent.getStatus());
+        payload.put(ConsentExtensionConstants.CONSENT_ID, createdConsent.getId());
+
+        JSONArray chosenSCAMethods = new JSONArray();
+        for (ScaMethod scaMethod : scaMethods) {
+            chosenSCAMethods.put(CommonConsentValidationUtil.convertObjectToJson(scaMethod));
+        }
+
+        if (scaMethods.size() > 1) {
+            payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
+        } else if (scaMethods.size() == 1) {
+            payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+        }
     }
 
     /**
