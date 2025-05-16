@@ -6,6 +6,7 @@ import com.wso2.openbanking.berlin.extensions.enums.AuthTypeEnum;
 import com.wso2.openbanking.berlin.extensions.enums.ConsentStatusEnum;
 import com.wso2.openbanking.berlin.extensions.enums.ConsentTypeEnum;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
 import com.wso2.openbanking.berlin.extensions.model.*;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.logging.Log;
@@ -18,7 +19,7 @@ import java.util.Optional;
 /**
  * Consent handler for account consents
  */
-public class FundsConfirmationConsentHandler implements ConsentHandler {
+public class FundsConfirmationConsentHandler implements ConsentHandler, ConsentResponseHandler {
     private static final Log log = LogFactory.getLog(FundsConfirmationConsentUtil.class);
 
     /**
@@ -96,5 +97,20 @@ public class FundsConfirmationConsentHandler implements ConsentHandler {
             // Append response data to response
             validationResponse.setData(data);
         }
+    }
+
+    /**
+     * Handles CoF consent creation response customization
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void enrichCreationResponse(EnrichConsentCreationRequestBody requestBody,
+                                       SuccessResponseForResponseAlternation validationResponse)
+            throws ServerException {
+        ConsentInitiationUtil.buildResponseAlterationResponseForConsentCreation(requestBody, validationResponse,
+                ConsentTypeEnum.FUNDS_CONFIRMATION.toString());
     }
 }

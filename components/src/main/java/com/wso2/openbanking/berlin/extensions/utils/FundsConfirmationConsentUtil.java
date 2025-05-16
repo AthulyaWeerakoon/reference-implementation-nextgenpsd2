@@ -1,13 +1,17 @@
 package com.wso2.openbanking.berlin.extensions.utils;
 
+import com.wso2.openbanking.berlin.extensions.datamodels.ScaMethod;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.model.StoredDetailedConsentResourceData;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 
 /**
  * Utility class for payment consent management
@@ -62,5 +66,29 @@ public class FundsConfirmationConsentUtil {
 
         log.debug("Validating account reference object");
         CommonConsentValidationUtil.validateAccountRefObject(accountObject);
+    }
+
+    /**
+     * Method to get the funds confirmation initiation response without links.
+     *
+     * @param createdConsent
+     * @param scaMethods
+     * @param payload
+     */
+    public static void appendPaymentInitiationResponseToPayload(StoredDetailedConsentResourceData createdConsent,
+                                                                ArrayList<ScaMethod> scaMethods, JSONObject payload) {
+        payload.put(ConsentExtensionConstants.CONSENT_STATUS, createdConsent.getStatus());
+        payload.put(ConsentExtensionConstants.CONSENT_ID, createdConsent.getId());
+
+        JSONArray chosenSCAMethods = new JSONArray();
+        for (ScaMethod scaMethod : scaMethods) {
+            chosenSCAMethods.put(CommonConsentValidationUtil.convertObjectToJson(scaMethod));
+        }
+
+        if (scaMethods.size() > 1) {
+            payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
+        } else {
+            payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+        }
     }
 }

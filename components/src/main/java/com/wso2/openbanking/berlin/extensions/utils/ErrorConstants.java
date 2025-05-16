@@ -34,6 +34,7 @@ public class ErrorConstants {
     public static final String DATE_MISSING = "Date header is missing in the request";
     public static final String CONSENT_ID_MISSING = "Consent-ID header is missing in the request";
     public static final String AUTH_CREATION_NOT_SUPPORTED = "Creating authorisation for consent is not supported";
+    public static final String EXPLICIT_AUTH_NOT_SUPPORTED = "Explicit authorisation is not supported";
     public static final String PATCH_NOT_SUPPORTED = "The PATCH method is not supported";
     public static final String DELETE_NOT_SUPPORTED = "The DELETE method is not supported";
     public static final String PUT_NOT_SUPPORTED = "The PUT method is not supported";

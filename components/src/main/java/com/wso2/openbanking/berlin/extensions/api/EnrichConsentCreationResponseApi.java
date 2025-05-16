@@ -1,17 +1,21 @@
 package com.wso2.openbanking.berlin.extensions.api;
 
-import com.wso2.openbanking.berlin.extensions.model.EnrichConsentCreationRequestBody;
-import com.wso2.openbanking.berlin.extensions.model.ErrorResponse;
-import com.wso2.openbanking.berlin.extensions.model.Response200ForResponseAlternation;
+import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
+import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
+import com.wso2.openbanking.berlin.extensions.model.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+import com.wso2.openbanking.berlin.extensions.utils.*;
 import io.swagger.annotations.*;
+import io.swagger.annotations.Authorization;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.InputStream;
-import java.util.Map;
-import java.util.List;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
@@ -37,7 +41,41 @@ public class EnrichConsentCreationResponseApi {
         @ApiResponse(code = 400, message = "Bad Request", response = ErrorResponse.class),
         @ApiResponse(code = 500, message = "Server Error", response = ErrorResponse.class)
     })
-    public Response enrichConsentCreationResponsePost(@Valid @NotNull EnrichConsentCreationRequestBody enrichConsentCreationRequestBody) {
-        return Response.ok().entity("magic!").build();
+    public Response enrichConsentCreationResponsePost(@Valid @NotNull EnrichConsentCreationRequestBody requestBody) {
+        Log log = LogFactory.getLog(PreProcessConsentCreationApi.class);
+        SuccessResponseForResponseAlternation validationResponse = new SuccessResponseForResponseAlternation();
+
+        try {
+            ConsentResponseHandler consentHandler = CommonConsentValidationUtil.getConsentResponseHandler(requestBody.getData()
+                    .getConsentResourcePath());
+
+            if (consentHandler != null) {
+                consentHandler.enrichCreationResponse(requestBody, validationResponse);
+            } else {
+                // Server error since if path is invalid consent creation should have failed
+                // thus making this unreachable
+                throw new ServerException(ServerException.ErrorCode.BAD_REQUEST,
+                        ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR, null,
+                                ErrorConstants.PATH_INVALID));
+            }
+
+        } catch (ServerException e) {
+            log.error(e);
+            return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
+
+        } catch (JSONException e) {
+            log.error(e);
+            return Response.status(Response.Status.BAD_REQUEST).entity(new JSONObject(
+                    ErrorUtil.getErrorResponse(ConsentExtensionConstants.INVALID_REQUEST, e.getMessage())
+            ).toString()).build();
+
+        } catch (Exception e) {
+            log.error(e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new JSONObject(
+                    ErrorUtil.getErrorResponse(ConsentExtensionConstants.SERVER_ERROR, e.getMessage())
+            ).toString()).build();
+        }
+
+        return Response.ok().entity(new JSONObject(validationResponse).toString()).build();
     }
 }
