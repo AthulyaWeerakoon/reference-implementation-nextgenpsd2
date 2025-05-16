@@ -181,6 +181,8 @@ public class ConsentInitiationUtil {
         data.setResponseHeaders(headersToSend);
         data.setModifiedResponse(payloadToSend);
 
+        validationResponse.setResponseId(requestBody.getRequestId());
+        validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
         validationResponse.setData(data);
     }
 }
