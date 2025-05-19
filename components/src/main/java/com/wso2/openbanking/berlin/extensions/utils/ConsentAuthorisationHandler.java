@@ -3,10 +3,7 @@ package com.wso2.openbanking.berlin.extensions.utils;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
 import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
-import com.wso2.openbanking.berlin.extensions.model.EnrichConsentCreationRequestBody;
-import com.wso2.openbanking.berlin.extensions.model.PreProcessConsentCreationRequestBody;
-import com.wso2.openbanking.berlin.extensions.model.SuccessResponseForResponseAlternation;
-import com.wso2.openbanking.berlin.extensions.model.SuccessResponsePreProcessConsentCreation;
+import com.wso2.openbanking.berlin.extensions.model.*;
 
 /**
  * Consent authorisation handler for explicit authorisation
@@ -23,6 +20,23 @@ public class ConsentAuthorisationHandler implements ConsentHandler, ConsentRespo
     @Override
     public void handleCreation(PreProcessConsentCreationRequestBody requestBody, SuccessResponsePreProcessConsentCreation validationResponse) throws FailedValidationException {
         // Throws an error since creating auth object for an existing consent is not supported
+        throw new FailedValidationException(FailedValidationException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.SERVICE_INVALID_405,
+                ErrorConstants.AUTH_CREATION_NOT_SUPPORTED));
+    }
+
+    /**
+     * Handles retrieval of consent authorisations
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void handleRetrieval(PreProcessConsentRequestBody requestBody,
+                                SuccessResponseForResponseAlternation validationResponse)
+            throws FailedValidationException, ServerException {
+        // Throws an error since auth resources for a consent cannot be retrieved through consent creation
         throw new FailedValidationException(FailedValidationException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
                 null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.SERVICE_INVALID_405,
                 ErrorConstants.AUTH_CREATION_NOT_SUPPORTED));

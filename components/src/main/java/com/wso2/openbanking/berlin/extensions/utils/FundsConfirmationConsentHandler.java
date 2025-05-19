@@ -100,6 +100,66 @@ public class FundsConfirmationConsentHandler implements ConsentHandler, ConsentR
     }
 
     /**
+     * Handles retrieval of funds confirmation consents
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void handleRetrieval(PreProcessConsentRequestBody requestBody,
+                                SuccessResponseForResponseAlternation validationResponse)
+            throws FailedValidationException, ServerException {
+
+        PreProcessConsentRetrievalData data = requestBody.getData();
+        StoredBasicConsentResourceData consentResource = requestBody.getData().getConsentResource();
+        String consentId = consentResource.getId();
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for valid client", consentId));
+        }
+
+        // Get request client id from the headers
+        String requestClientId;
+        try {
+            JSONObject headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
+        } catch (JSONException e) {
+            // Should be unreachable (since insequence always adds client id header)
+            throw new ServerException(ServerException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.INTERNAL_SERVER_ERROR,
+                    "x-wso2-client-id header not found"));
+        }
+
+        // Validate client
+        CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct type", consentId));
+        }
+        CommonConsentValidationUtil.validateConsentType(ConsentTypeEnum.FUNDS_CONFIRMATION.toString(),
+                consentResource.getType());
+
+        // Build empty response to send since no additional attributes are added
+        validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
+        validationResponse.setResponseId(requestBody.getRequestId());
+
+        SuccessResponseForResponseAlternationData responseData = new SuccessResponseForResponseAlternationData();
+
+        // Build response body
+        JSONObject payloadToSend = new JSONObject();
+        if(!requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
+            payloadToSend = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
+        }
+
+        CommonConsentValidationUtil.appendConsentStatusResponse(consentResource,
+                ConsentTypeEnum.FUNDS_CONFIRMATION.toString(), payloadToSend);
+        responseData.setModifiedResponse(payloadToSend);
+
+        validationResponse.setData(responseData);
+    }
+
+    /**
      * Handles CoF consent creation response customization
      *
      * @param requestBody

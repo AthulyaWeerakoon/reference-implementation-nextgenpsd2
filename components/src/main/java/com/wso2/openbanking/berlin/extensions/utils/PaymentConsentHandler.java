@@ -106,6 +106,64 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
     }
 
     /**
+     * Handles retrieval of payment consents
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void handleRetrieval(PreProcessConsentRequestBody requestBody,
+                                SuccessResponseForResponseAlternation validationResponse)
+            throws FailedValidationException, ServerException {
+
+        PreProcessConsentRetrievalData data = requestBody.getData();
+        StoredBasicConsentResourceData consentResource = requestBody.getData().getConsentResource();
+        String consentId = consentResource.getId();
+        String consentTypeFromPath = CommonConsentValidationUtil
+                .getConsentTypeFromRequestPath(requestBody.getData().getConsentResourcePath());
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for valid client", consentId));
+        }
+
+        // Get request client id from the headers
+        String requestClientId;
+        try {
+            JSONObject headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
+        } catch (JSONException e) {
+            // Should be unreachable (since insequence always adds client id header)
+            throw new ServerException(ServerException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.INTERNAL_SERVER_ERROR,
+                    "x-wso2-client-id header not found"));
+        }
+
+        // Validate client
+        CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct type", consentId));
+        }
+        CommonConsentValidationUtil.validateConsentType(consentTypeFromPath, consentResource.getType());
+
+        // Build empty response to send since no additional attributes are added
+        validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
+        validationResponse.setResponseId(requestBody.getRequestId());
+
+        SuccessResponseForResponseAlternationData responseData = new SuccessResponseForResponseAlternationData();
+
+        // For status calls
+        if(requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
+            JSONObject statusPayload = new JSONObject();
+            CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentTypeFromPath, statusPayload);
+            responseData.setModifiedResponse(statusPayload);
+        }
+
+        validationResponse.setData(responseData);
+    }
+
+    /**
      * Handles payment consent creation response customization
      *
      * @param requestBody
