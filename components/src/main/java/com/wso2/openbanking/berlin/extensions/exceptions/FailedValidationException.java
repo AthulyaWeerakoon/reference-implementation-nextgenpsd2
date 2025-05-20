@@ -28,16 +28,18 @@ public class FailedValidationException extends Exception {
 
     private final FailedResponse.StatusEnum status = FailedResponse.StatusEnum.ERROR;
     private final ErrorCode errorCode;
-    private JSONObject data;
+    private final JSONObject data;
 
     public FailedValidationException(ErrorCode errorCode, JSONObject data) {
         super(data.toString());
         this.errorCode = errorCode;
+        this.data = data;
     }
 
     public FailedValidationException(ErrorCode errorCode, JSONObject data, Throwable e) {
         super(data.toString(), e);
         this.errorCode = errorCode;
+        this.data = data;
     }
 
     /**

@@ -702,4 +702,10 @@ public class CommonConsentValidationUtil {
                     ErrorConstants.CONSENT_ID_TYPE_MISMATCH));
         }
     }
+
+    public static JSONObject getIdempotencyHeaderJSON(String xRequestID) {
+        JSONObject idempotencyHeader = new JSONObject();
+        idempotencyHeader.put(ConsentExtensionConstants.X_REQUEST_ID_PROPER_CASE_HEADER, xRequestID);
+        return idempotencyHeader;
+    }
 }

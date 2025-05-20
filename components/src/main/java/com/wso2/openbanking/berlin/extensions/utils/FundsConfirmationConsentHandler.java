@@ -121,8 +121,9 @@ public class FundsConfirmationConsentHandler implements ConsentHandler, ConsentR
 
         // Get request client id from the headers
         String requestClientId;
+        JSONObject headers;
         try {
-            JSONObject headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
             requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
         } catch (JSONException e) {
             // Should be unreachable (since insequence always adds client id header)
@@ -155,6 +156,9 @@ public class FundsConfirmationConsentHandler implements ConsentHandler, ConsentR
         CommonConsentValidationUtil.appendConsentStatusResponse(consentResource,
                 ConsentTypeEnum.FUNDS_CONFIRMATION.toString(), payloadToSend);
         responseData.setModifiedResponse(payloadToSend);
+        responseData.setResponseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
+                headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER)
+        ));
 
         validationResponse.setData(responseData);
     }

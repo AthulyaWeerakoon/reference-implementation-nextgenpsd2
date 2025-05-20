@@ -139,8 +139,9 @@ public class AccountConsentHandler implements ConsentHandler, ConsentResponseHan
 
         // Get request client id from the headers
         String requestClientId;
+        JSONObject headers;
         try {
-            JSONObject headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
             requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
         } catch (JSONException e) {
             // Should be unreachable (since insequence always adds client id header)
@@ -172,13 +173,16 @@ public class AccountConsentHandler implements ConsentHandler, ConsentResponseHan
         if (StringUtils.contains(requestPath, ConsentExtensionConstants.STATUS)) {
             CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentType, payloadToSend);
         } else {
-            CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
+            payloadToSend = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
             AccountConsentUtil.extendAccountConsentGetResponse(consentResource, payloadToSend);
         }
 
         validationResponse.setResponseId(requestBody.getRequestId());
         validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
-        validationResponse.setData(new SuccessResponseForResponseAlternationData().modifiedResponse(payloadToSend));
+        validationResponse.setData(new SuccessResponseForResponseAlternationData()
+                .modifiedResponse(payloadToSend)
+                .responseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
+                        headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER))));
     }
 
     /**

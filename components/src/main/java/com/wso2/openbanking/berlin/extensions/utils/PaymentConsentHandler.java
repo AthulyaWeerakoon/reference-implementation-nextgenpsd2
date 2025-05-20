@@ -118,7 +118,7 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
             throws FailedValidationException, ServerException {
 
         PreProcessConsentRetrievalData data = requestBody.getData();
-        StoredBasicConsentResourceData consentResource = requestBody.getData().getConsentResource();
+        StoredBasicConsentResourceData consentResource = data.getConsentResource();
         String consentId = consentResource.getId();
         String consentTypeFromPath = CommonConsentValidationUtil
                 .getConsentTypeFromRequestPath(requestBody.getData().getConsentResourcePath());
@@ -129,8 +129,9 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
 
         // Get request client id from the headers
         String requestClientId;
+        JSONObject headers;
         try {
-            JSONObject headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
             requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
         } catch (JSONException e) {
             // Should be unreachable (since insequence always adds client id header)
@@ -142,23 +143,28 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
         // Validate client
         CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
 
+        // Validate consent type
         if (log.isDebugEnabled()) {
             log.debug(String.format("Validating consent of Id %s for correct type", consentId));
         }
         CommonConsentValidationUtil.validateConsentType(consentTypeFromPath, consentResource.getType());
 
-        // Build empty response to send since no additional attributes are added
         validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
         validationResponse.setResponseId(requestBody.getRequestId());
 
         SuccessResponseForResponseAlternationData responseData = new SuccessResponseForResponseAlternationData();
 
         // For status calls
-        if(requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
-            JSONObject statusPayload = new JSONObject();
-            CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentTypeFromPath, statusPayload);
-            responseData.setModifiedResponse(statusPayload);
+        JSONObject statusPayload = new JSONObject();
+        if(!requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
+            statusPayload = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
         }
+
+        CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentTypeFromPath, statusPayload);
+        responseData.setModifiedResponse(statusPayload);
+        responseData.setResponseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
+                headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER)
+        ));
 
         validationResponse.setData(responseData);
     }
