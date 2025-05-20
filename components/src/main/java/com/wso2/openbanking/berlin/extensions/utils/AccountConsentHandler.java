@@ -9,6 +9,7 @@ import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationExcepti
 import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
 import com.wso2.openbanking.berlin.extensions.model.*;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -112,6 +113,76 @@ public class AccountConsentHandler implements ConsentHandler, ConsentResponseHan
             // Append response data to response
             validationResponse.setData(data);
         }
+    }
+
+    /**
+     * Handles retrieval of account requests
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void handleRetrieval(PreProcessConsentRequestBody requestBody,
+                                SuccessResponseForResponseAlternation validationResponse)
+            throws FailedValidationException, ServerException {
+
+        PreProcessConsentRetrievalData data = requestBody.getData();
+        String requestPath = data.getConsentResourcePath();
+        String consentType = CommonConsentValidationUtil.getConsentTypeFromRequestPath(requestPath);
+        String consentId = data.getConsentId();
+        StoredBasicConsentResourceData consentResource = data.getConsentResource();
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for valid client", consentId));
+        }
+
+        // Get request client id from the headers
+        String requestClientId;
+        JSONObject headers;
+        try {
+            headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
+        } catch (JSONException e) {
+            // Should be unreachable (since insequence always adds client id header)
+            throw new ServerException(ServerException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.INTERNAL_SERVER_ERROR,
+                    "x-wso2-client-id header not found"));
+        }
+
+        // Validate client
+        CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct type", consentId));
+        }
+        CommonConsentValidationUtil.validateConsentType(consentType, consentResource.getType());
+
+        if ((consentResource.getRecurringIndicator() && AccountConsentUtil.isConsentExpired(
+                consentResource.getValidityTime()))
+                && !(StringUtils.equals(consentResource.getStatus(),
+                ConsentStatusEnum.TERMINATED_BY_TPP.toString())
+                || StringUtils.equals(consentResource.getStatus(),
+                ConsentStatusEnum.REVOKED_BY_PSU.toString()))) {
+            log.debug("The Consent is expired");
+            consentResource.setStatus(ConsentStatusEnum.EXPIRED.toString());
+        }
+
+        JSONObject payloadToSend = new JSONObject();
+
+        if (StringUtils.contains(requestPath, ConsentExtensionConstants.STATUS)) {
+            CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentType, payloadToSend);
+        } else {
+            payloadToSend = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
+            AccountConsentUtil.extendAccountConsentGetResponse(consentResource, payloadToSend);
+        }
+
+        validationResponse.setResponseId(requestBody.getRequestId());
+        validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
+        validationResponse.setData(new SuccessResponseForResponseAlternationData()
+                .modifiedResponse(payloadToSend)
+                .responseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
+                        headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER))));
     }
 
     /**

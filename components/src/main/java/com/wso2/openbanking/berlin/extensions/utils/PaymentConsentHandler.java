@@ -97,12 +97,87 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
             // Append auth resource to consent
             consentResource.addAuthorizationsItem(authObj);
 
+            // Store payment product as consent attribute
+            consentResource.setAttributes(
+                    PaymentConsentUtil.getPaymentProductAttribute(requestBody.getData().getConsentResourcePath()));
+
             // Envelop consent in response data
             data.setConsentResource(consentResource);
 
             // Append response data to response
             validationResponse.setData(data);
         }
+    }
+
+    /**
+     * Handles retrieval of payment consents
+     *
+     * @param requestBody
+     * @param validationResponse
+     * @throws FailedValidationException
+     */
+    @Override
+    public void handleRetrieval(PreProcessConsentRequestBody requestBody,
+                                SuccessResponseForResponseAlternation validationResponse)
+            throws FailedValidationException, ServerException {
+
+        PreProcessConsentRetrievalData data = requestBody.getData();
+        StoredBasicConsentResourceData consentResource = data.getConsentResource();
+        String consentId = consentResource.getId();
+        String consentTypeFromPath = CommonConsentValidationUtil
+                .getConsentTypeFromRequestPath(requestBody.getData().getConsentResourcePath());
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for valid client", consentId));
+        }
+
+        // Get request client id from the headers
+        String requestClientId;
+        JSONObject headers;
+        try {
+            headers = CommonConsentValidationUtil.convertObjectToJson(data.getRequestHeaders());
+            requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
+        } catch (JSONException e) {
+            // Should be unreachable (since insequence always adds client id header)
+            throw new ServerException(ServerException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.INTERNAL_SERVER_ERROR,
+                    "x-wso2-client-id header not found"));
+        }
+
+        // Validate client
+        CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
+
+        // Validate consent type
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct type", consentId));
+        }
+        CommonConsentValidationUtil.validateConsentType(consentTypeFromPath, consentResource.getType());
+
+        // Validate consent payment product
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct payment product", consentId));
+        }
+        PaymentConsentUtil.validatePaymentProductFromAttributes(consentResource.getAttributes(),
+                data.getConsentResourcePath());
+
+        validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
+        validationResponse.setResponseId(requestBody.getRequestId());
+
+        SuccessResponseForResponseAlternationData responseData = new SuccessResponseForResponseAlternationData();
+
+        // For status calls
+        JSONObject statusPayload = new JSONObject();
+        if(!requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
+            statusPayload = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
+        }
+
+        CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentTypeFromPath, statusPayload);
+        responseData.setModifiedResponse(statusPayload);
+        responseData.setResponseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
+                headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER)
+        ));
+
+        validationResponse.setData(responseData);
     }
 
     /**

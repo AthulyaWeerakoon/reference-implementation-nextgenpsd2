@@ -10,7 +10,9 @@ public class FailedValidationException extends Exception {
 
     public enum ErrorCode {
         BAD_REQUEST(400),
+        UNAUTHORIZED(401),
         NOT_FOUND(404),
+        FORBIDDEN(403),
         INTERNAL_SERVER_ERROR(500);
 
         private final int code;
@@ -26,16 +28,18 @@ public class FailedValidationException extends Exception {
 
     private final FailedResponse.StatusEnum status = FailedResponse.StatusEnum.ERROR;
     private final ErrorCode errorCode;
-    private JSONObject data;
+    private final JSONObject data;
 
     public FailedValidationException(ErrorCode errorCode, JSONObject data) {
         super(data.toString());
         this.errorCode = errorCode;
+        this.data = data;
     }
 
     public FailedValidationException(ErrorCode errorCode, JSONObject data, Throwable e) {
         super(data.toString(), e);
         this.errorCode = errorCode;
+        this.data = data;
     }
 
     /**

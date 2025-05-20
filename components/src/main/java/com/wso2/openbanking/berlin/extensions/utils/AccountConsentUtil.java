@@ -4,8 +4,10 @@ import com.wso2.openbanking.berlin.extensions.configurations.ConfigurablePropert
 import com.wso2.openbanking.berlin.extensions.datamodels.ScaMethod;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.enums.AccessMethodEnum;
+import com.wso2.openbanking.berlin.extensions.enums.ConsentTypeEnum;
 import com.wso2.openbanking.berlin.extensions.enums.PermissionEnum;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.model.StoredBasicConsentResourceData;
 import com.wso2.openbanking.berlin.extensions.model.StoredDetailedConsentResourceData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -13,9 +15,12 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Utility class for Account consent management
@@ -361,5 +366,71 @@ public class AccountConsentUtil {
 
         // Retrieve the UTC timestamp in long.
         return Instant.from(zonedDateTime).getEpochSecond();
+    }
+
+    /**
+     * Checks if consent is expired based on validUntilDate.
+     *
+     * @param validUntilDate valid until time in epoch seconds
+     * @return whether consent is expired or not
+     */
+    public static boolean isConsentExpired(long validUntilDate) {
+        LocalDateTime expDateTime = LocalDateTime.ofInstant(
+                Instant.ofEpochSecond(validUntilDate), ZoneOffset.UTC);
+        LocalDate expDate = expDateTime.toLocalDate();
+
+        LocalDate currDate = LocalDate.now(ZoneOffset.UTC);
+
+        return currDate.isAfter(expDate);
+    }
+
+    /**
+     * Method to construct accounts consent get response.
+     *
+     * @param retrievedConsent consent object
+     * @return the constructed account consent get response
+     */
+    public static void extendAccountConsentGetResponse(StoredBasicConsentResourceData retrievedConsent,
+                                                       JSONObject payloadToSend) {
+
+        AccountConsentUtil.addAdditionalAccountConsentAttributes(retrievedConsent, payloadToSend);
+        payloadToSend.put(ConsentExtensionConstants.LINKS, getAccountConsentGetLinks());
+    }
+
+    /**
+     * Constructs the links object for account consent get responses.
+     *
+     * @return constructed links for account consent get responses
+     */
+    public static JSONObject getAccountConsentGetLinks() {
+
+        JSONObject links = new JSONObject();
+
+        String apiVersion = CommonConsentValidationUtil.getApiVersion(ConsentTypeEnum.ACCOUNTS.toString());
+
+        JSONObject account = new JSONObject();
+        account.put(ConsentExtensionConstants.HREF,
+                String.format(ConsentExtensionConstants.ACCOUNTS_LINK_TEMPLATE, apiVersion));
+        links.put(ConsentExtensionConstants.ACCOUNT, account);
+
+        return links;
+    }
+
+    /**
+     * Method to get the account consent get response without links.
+     *
+     * @param retrievedConsent consent object
+     * @return the constructed account consent get response without links
+     */
+    public static void addAdditionalAccountConsentAttributes(StoredBasicConsentResourceData retrievedConsent,
+                                                             JSONObject payloadToSend) {
+
+        payloadToSend.put(ConsentExtensionConstants.CONSENT_STATUS, retrievedConsent.getStatus());
+
+        Date currentDate = new Date(retrievedConsent.getUpdatedTime() * 1000L);
+        DateFormat dateFormat = new SimpleDateFormat(ConsentExtensionConstants.DATE_FORMAT);
+        String lastActionDate = dateFormat.format(currentDate);
+
+        payloadToSend.put(ConsentExtensionConstants.LAST_ACTION_DATE, lastActionDate);
     }
 }

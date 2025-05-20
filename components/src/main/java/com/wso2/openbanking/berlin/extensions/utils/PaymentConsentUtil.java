@@ -4,18 +4,19 @@ import com.wso2.openbanking.berlin.extensions.configurations.ConfigurablePropert
 import com.wso2.openbanking.berlin.extensions.datamodels.ScaMethod;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.exceptions.ServerException;
 import com.wso2.openbanking.berlin.extensions.model.StoredDetailedConsentResourceData;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Utility class for payment consent management
@@ -424,6 +425,57 @@ public class PaymentConsentUtil {
             payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
         } else {
             payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+        }
+    }
+
+    /**
+     * Method to return a JSON Object with payment product
+     *
+     * @param consentResourcePath
+     * @return
+     */
+    public static Object getPaymentProductAttribute(String consentResourcePath) {
+        JSONObject attributesJSON = new JSONObject();
+        attributesJSON.put(ConsentExtensionConstants.PAYMENT_PRODUCT_CC, getPaymentProduct(consentResourcePath));
+        return attributesJSON;
+    }
+
+    /**
+     * Helper method to extract payment product from resource path
+     *
+     * @param consentResourcePath
+     * @return
+     */
+    public static String getPaymentProduct(String consentResourcePath) {
+        return consentResourcePath.split("/")[1];
+    }
+
+    /**
+     * Method to validate payment product for payment consents
+     *
+     * @param attributes
+     * @param consentResourcePath
+     */
+    public static void validatePaymentProductFromAttributes(Object attributes, String consentResourcePath)
+            throws FailedValidationException {
+        String paymentProductFromPath = getPaymentProduct(consentResourcePath);
+
+        // Extract payment product from attributes
+        String paymentProductFromAttributes;
+        try {
+            JSONObject attributesJSON = CommonConsentValidationUtil.convertObjectToJson(attributes);
+            paymentProductFromAttributes = attributesJSON.getString(ConsentExtensionConstants.PAYMENT_PRODUCT_CC);
+        } catch (JSONException e) {
+            // Should be unreachable as payment product gets added as an attribute at initiation
+            throw new ServerException(ServerException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.INTERNAL_SERVER_ERROR,
+                    "Payment product not stored at consent initiation. Product validation failed."));
+        }
+
+        if (!paymentProductFromAttributes.equals(paymentProductFromPath)) {
+            throw new FailedValidationException(FailedValidationException.ErrorCode.BAD_REQUEST, ErrorUtil.constructBerlinError(
+                    null, TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.PRODUCT_INVALID,
+                    "The provided consent ID valid but belongs to a different payment product"));
         }
     }
 }

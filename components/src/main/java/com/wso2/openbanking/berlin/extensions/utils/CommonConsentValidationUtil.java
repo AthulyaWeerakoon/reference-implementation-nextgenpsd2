@@ -10,6 +10,7 @@ import com.wso2.openbanking.berlin.extensions.datamodels.ScaApproach;
 import com.wso2.openbanking.berlin.extensions.datamodels.TPPMessage;
 import com.wso2.openbanking.berlin.extensions.configurations.ConfigurableProperties;
 import com.wso2.openbanking.berlin.extensions.exceptions.FailedValidationException;
+import com.wso2.openbanking.berlin.extensions.model.StoredBasicConsentResourceData;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -202,6 +203,26 @@ public class CommonConsentValidationUtil {
                 return ConsentTypeEnum.FUNDS_CONFIRMATION.toString();
             default:
                 return ConsentTypeEnum.ACCOUNTS.toString();
+        }
+    }
+
+    /**
+     * Constructs the consent status GET response.
+     *
+     * @param consentResource the current consent resource
+     * @param consentType     the consent type
+     * @param payloadToSend   the response payload
+     */
+    public static void appendConsentStatusResponse(StoredBasicConsentResourceData consentResource,
+                                                   String consentType, JSONObject payloadToSend) {
+
+        if (StringUtils.equals(ConsentTypeEnum.ACCOUNTS.toString(), consentType)
+                || StringUtils.equals(ConsentTypeEnum.FUNDS_CONFIRMATION.toString(), consentType)) {
+            payloadToSend.put(ConsentExtensionConstants.CONSENT_STATUS,
+                    consentResource.getStatus());
+        } else {
+            payloadToSend.put(ConsentExtensionConstants.TRANSACTION_STATUS,
+                    consentResource.getStatus());
         }
     }
 
@@ -649,4 +670,42 @@ public class CommonConsentValidationUtil {
         }
     }
 
+    /**
+     * Validates the consent client ID with the registered client ID.
+     *
+     * @param registeredClientId the registered client id
+     * @param consentClientId    the client id of the current consent
+     */
+    public static void validateClient(String registeredClientId, String consentClientId)
+            throws FailedValidationException {
+
+        if (!StringUtils.equals(registeredClientId, consentClientId)) {
+            throw new FailedValidationException(FailedValidationException.ErrorCode.FORBIDDEN, ErrorUtil.constructBerlinError(null,
+                    TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.RESOURCE_UNKNOWN,
+                    ErrorConstants.NO_CONSENT_FOR_CLIENT_ERROR));
+        }
+    }
+
+    /**
+     * Validates the request consent type with the type of the current consent.
+     *
+     * @param requestConsentType     the consent type which the request belongs to
+     * @param typeOfRetrievedConsent the consent type of the current consent
+     */
+    public static void validateConsentType(String requestConsentType, String typeOfRetrievedConsent)
+            throws FailedValidationException {
+
+        if (!StringUtils.equals(requestConsentType, typeOfRetrievedConsent)) {
+            log.error(ErrorConstants.CONSENT_ID_TYPE_MISMATCH);
+            throw new FailedValidationException(FailedValidationException.ErrorCode.UNAUTHORIZED, ErrorUtil.constructBerlinError(null,
+                    TPPMessage.CategoryEnum.ERROR, TPPMessage.CodeEnum.CONSENT_INVALID,
+                    ErrorConstants.CONSENT_ID_TYPE_MISMATCH));
+        }
+    }
+
+    public static JSONObject getIdempotencyHeaderJSON(String xRequestID) {
+        JSONObject idempotencyHeader = new JSONObject();
+        idempotencyHeader.put(ConsentExtensionConstants.X_REQUEST_ID_PROPER_CASE_HEADER, xRequestID);
+        return idempotencyHeader;
+    }
 }
