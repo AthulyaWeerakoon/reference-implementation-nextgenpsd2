@@ -205,6 +205,7 @@ public class ConsentExtensionConstants {
     public static final String MASKED_PAN = "maskedPan";
     public static final String MSISDN = "msisdn";
     public static final String PAYMENT_PRODUCT = "payment-product";
+    public static final String PAYMENT_PRODUCT_CC = "paymentProduct";
     public static final String PAYMENT_SERVICE = "payment-service";
     public static final String TRANSACTION_STATUS = "transactionStatus";
     public static final String ASPSP_SCA_APPROACH = "ASPSP-SCA-Approach";

@@ -97,6 +97,10 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
             // Append auth resource to consent
             consentResource.addAuthorizationsItem(authObj);
 
+            // Store payment product as consent attribute
+            consentResource.setAttributes(
+                    PaymentConsentUtil.getPaymentProductAttribute(requestBody.getData().getConsentResourcePath()));
+
             // Envelop consent in response data
             data.setConsentResource(consentResource);
 
@@ -148,6 +152,13 @@ public class PaymentConsentHandler implements ConsentHandler, ConsentResponseHan
             log.debug(String.format("Validating consent of Id %s for correct type", consentId));
         }
         CommonConsentValidationUtil.validateConsentType(consentTypeFromPath, consentResource.getType());
+
+        // Validate consent payment product
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Validating consent of Id %s for correct payment product", consentId));
+        }
+        PaymentConsentUtil.validatePaymentProductFromAttributes(consentResource.getAttributes(),
+                data.getConsentResourcePath());
 
         validationResponse.setStatus(SuccessResponseForResponseAlternation.StatusEnum.SUCCESS);
         validationResponse.setResponseId(requestBody.getRequestId());
