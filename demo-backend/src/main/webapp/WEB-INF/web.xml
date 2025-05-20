@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~ Copyright (c) 2025, WSO2 LLC. (https://www.wso2.com).
+ ~
+ ~ WSO2 LLC. licenses this file to you under the Apache License,
+ ~ Version 2.0 (the "License"); you may not use this file except
+ ~ in compliance with the License.
+ ~ You may obtain a copy of the License at
+ ~
+ ~     http://www.apache.org/licenses/LICENSE-2.0
+ ~
+ ~ Unless required by applicable law or agreed to in writing,
+ ~ software distributed under the License is distributed on an
+ ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~ KIND, either express or implied. See the License for the
+ ~ specific language governing permissions and limitations
+ ~ under the License.
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+         http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <display-name>Open-Banking</display-name>
+
+    <servlet>
+        <servlet-name>AccountsServiceJAXServlet</servlet-name>
+        <display-name>Accounts Service JAX-WS/JAX-RS Servlet</display-name>
+        <description>Accounts Service JAX-WS/JAX-RS Endpoint</description>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+        <init-param>
+            <param-name>service-list-stylesheet</param-name>
+            <param-value>servicelist.css</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.openbanking.berlin.demo.backend.services.AccountService
+            </param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>PaymentsServiceJAXServlet</servlet-name>
+        <display-name>Payments Service JAX-WS/JAX-RS Servlet</display-name>
+        <description>Payments Service JAX-WS/JAX-RS Endpoint</description>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+        <init-param>
+            <param-name>service-list-stylesheet</param-name>
+            <param-value>servicelist.css</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.openbanking.berlin.demo.backend.services.PaymentService
+            </param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>UserLookupServiceJAXServlet</servlet-name>
+        <display-name>User Lookup Service JAX-WS/JAX-RS Servlet</display-name>
+        <description>User Lookup Service JAX-WS/JAX-RS Endpoint</description>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+        <init-param>
+            <param-name>service-list-stylesheet</param-name>
+            <param-value>servicelist.css</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.openbanking.berlin.demo.backend.services.UserAccountLookupService
+            </param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>AccountsLookupServiceJAXServlet</servlet-name>
+        <display-name>Accounts Lookup Service JAX-WS/JAX-RS Servlet</display-name>
+        <description>Accounts Lookup Service JAX-WS/JAX-RS Endpoint</description>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+        <init-param>
+            <param-name>service-list-stylesheet</param-name>
+            <param-value>servicelist.css</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.openbanking.berlin.demo.backend.services.AccountUserLookupService
+            </param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet>
+        <servlet-name>FundsConfirmationServiceJAXServlet</servlet-name>
+        <display-name>Fund Confirmation Service JAX-WS/JAX-RS Servlet</display-name>
+        <description>Funds Confirmation Service JAX-WS/JAX-RS Endpoint</description>
+        <servlet-class>
+            org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet
+        </servlet-class>
+        <init-param>
+            <param-name>service-list-stylesheet</param-name>
+            <param-value>servicelist.css</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>jaxrs.serviceClasses</param-name>
+            <param-value>
+                org.wso2.openbanking.berlin.demo.backend.services.FundsConfirmationService
+            </param-value>
+        </init-param>
+
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AccountsServiceJAXServlet</servlet-name>
+        <url-pattern>/services/accounts/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PaymentsServiceJAXServlet</servlet-name>
+        <url-pattern>/services/payments/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>UserLookupServiceJAXServlet</servlet-name>
+        <url-pattern>/services/v130/accounts/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>AccountsLookupServiceJAXServlet</servlet-name>
+        <url-pattern>/services/v130/users/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>FundsConfirmationServiceJAXServlet</servlet-name>
+        <url-pattern>/services/funds-confirmations/*</url-pattern>
+    </servlet-mapping>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+
+</web-app>
+
