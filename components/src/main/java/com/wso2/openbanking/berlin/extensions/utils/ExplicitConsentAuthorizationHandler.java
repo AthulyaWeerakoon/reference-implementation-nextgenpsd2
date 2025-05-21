@@ -8,7 +8,7 @@ import com.wso2.openbanking.berlin.extensions.model.*;
 /**
  * Consent authorisation handler for explicit authorisation
  */
-public class ConsentAuthorisationHandler implements ConsentHandler, ConsentResponseHandler {
+public class ExplicitConsentAuthorizationHandler implements ConsentHandler, ConsentResponseHandler {
     // ToDo: Implement authorisation creation for consents
 
     /**

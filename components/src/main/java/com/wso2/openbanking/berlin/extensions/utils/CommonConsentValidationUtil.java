@@ -155,7 +155,7 @@ public class CommonConsentValidationUtil {
                 return new FundsConfirmationConsentHandler();
             case ConsentExtensionConstants.EXPLICIT_AUTHORISATION_PATH_END:
             case ConsentExtensionConstants.PAYMENT_EXPLICIT_CANCELLATION_AUTHORISATION_PATH_END:
-                return new ConsentAuthorisationHandler();
+                return new ExplicitConsentAuthorizationHandler();
             default:
                 return null;
         }
