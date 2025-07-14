@@ -1,9 +1,14 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.FailedResponseClientProcess;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.FailedResponseClientProcessData;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseClientProcess;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("Response200ForClientProcess")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class Response200ForClientProcess   {
   private String responseId;
   public enum StatusEnum {
@@ -72,9 +77,11 @@ public class Response200ForClientProcess   {
 
   @JsonCreator
   public Response200ForClientProcess(
+    @JsonProperty(required = true, value = "responseId") String responseId,
     @JsonProperty(required = true, value = "status") StatusEnum status,
     @JsonProperty(required = true, value = "data") FailedResponseClientProcessData data
   ) {
+    this.responseId = responseId;
     this.status = status;
     this.data = data;
   }
@@ -87,13 +94,13 @@ public class Response200ForClientProcess   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("responseId")
-  public String getResponseId() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "responseId")
+  @NotNull public String getResponseId() {
     return responseId;
   }
 
-  @JsonProperty("responseId")
+  @JsonProperty(required = true, value = "responseId")
   public void setResponseId(String responseId) {
     this.responseId = responseId;
   }
@@ -138,7 +145,7 @@ public class Response200ForClientProcess   {
   }
 
   /**
-   * If any custom error code to return.
+   * If any HTTP error code to return.
    **/
   public Response200ForClientProcess errorCode(Integer errorCode) {
     this.errorCode = errorCode;
@@ -146,7 +153,7 @@ public class Response200ForClientProcess   {
   }
 
   
-  @ApiModelProperty(value = "If any custom error code to return.")
+  @ApiModelProperty(value = "If any HTTP error code to return.")
   @JsonProperty("errorCode")
   public Integer getErrorCode() {
     return errorCode;

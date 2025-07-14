@@ -1,21 +1,36 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("Response200ForErrorMapper")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class Response200ForErrorMapper   {
   private String responseId;
   private Integer errorCode;
   private Object data;
 
   public Response200ForErrorMapper() {
+  }
+
+  @JsonCreator
+  public Response200ForErrorMapper(
+    @JsonProperty(required = true, value = "responseId") String responseId,
+    @JsonProperty(required = true, value = "data") Object data
+  ) {
+    this.responseId = responseId;
+    this.data = data;
   }
 
   /**
@@ -26,13 +41,13 @@ public class Response200ForErrorMapper   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("responseId")
-  public String getResponseId() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "responseId")
+  @NotNull public String getResponseId() {
     return responseId;
   }
 
-  @JsonProperty("responseId")
+  @JsonProperty(required = true, value = "responseId")
   public void setResponseId(String responseId) {
     this.responseId = responseId;
   }
@@ -65,13 +80,13 @@ public class Response200ForErrorMapper   {
   }
 
   
-  @ApiModelProperty(value = "Defines the custom error response.")
-  @JsonProperty("data")
-  public Object getData() {
+  @ApiModelProperty(required = true, value = "Defines the custom error response.")
+  @JsonProperty(required = true, value = "data")
+  @NotNull public Object getData() {
     return data;
   }
 
-  @JsonProperty("data")
+  @JsonProperty(required = true, value = "data")
   public void setData(Object data) {
     this.data = data;
   }

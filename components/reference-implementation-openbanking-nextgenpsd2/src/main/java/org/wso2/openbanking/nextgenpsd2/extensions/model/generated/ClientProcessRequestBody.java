@@ -1,22 +1,36 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.ClientProcessData;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("ClientProcessRequestBody")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class ClientProcessRequestBody   {
   private String requestId;
   private ClientProcessData data;
 
   public ClientProcessRequestBody() {
+  }
+
+  @JsonCreator
+  public ClientProcessRequestBody(
+    @JsonProperty(required = true, value = "requestId") String requestId,
+    @JsonProperty(required = true, value = "data") ClientProcessData data
+  ) {
+    this.requestId = requestId;
+    this.data = data;
   }
 
   /**
@@ -28,13 +42,13 @@ public class ClientProcessRequestBody   {
   }
 
   
-  @ApiModelProperty(example = "Ec1wMjmiG8", value = "A unique correlation identifier")
-  @JsonProperty("requestId")
-  public String getRequestId() {
+  @ApiModelProperty(example = "Ec1wMjmiG8", required = true, value = "A unique correlation identifier")
+  @JsonProperty(required = true, value = "requestId")
+  @NotNull public String getRequestId() {
     return requestId;
   }
 
-  @JsonProperty("requestId")
+  @JsonProperty(required = true, value = "requestId")
   public void setRequestId(String requestId) {
     this.requestId = requestId;
   }
@@ -47,13 +61,13 @@ public class ClientProcessRequestBody   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("data")
-  @Valid public ClientProcessData getData() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "data")
+  @NotNull @Valid public ClientProcessData getData() {
     return data;
   }
 
-  @JsonProperty("data")
+  @JsonProperty(required = true, value = "data")
   public void setData(ClientProcessData data) {
     this.data = data;
   }

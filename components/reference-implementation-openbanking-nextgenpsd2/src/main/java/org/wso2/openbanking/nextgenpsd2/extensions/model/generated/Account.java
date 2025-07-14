@@ -2,6 +2,8 @@ package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.HashMap;
+import java.util.Map;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
@@ -12,34 +14,45 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-
-
-@JsonTypeName("SuccessResponseForConsentSearchData")
+/**
+ * A user account or resource representation
+ **/
+@ApiModel(description = "A user account or resource representation")
+@JsonTypeName("Account")
 @javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
-public class SuccessResponseForConsentSearchData   {
-  private Object enrichedSearchResult;
+public class Account extends HashMap<String, Object>  {
+  private String displayName;
 
-  public SuccessResponseForConsentSearchData() {
+  public Account() {
+  }
+
+  @JsonCreator
+  public Account(
+    @JsonProperty(required = true, value = "displayName") String displayName
+  ) {
+    super(
+    );
+    this.displayName = displayName;
   }
 
   /**
-   * Enriched search result
+   * Account display name
    **/
-  public SuccessResponseForConsentSearchData enrichedSearchResult(Object enrichedSearchResult) {
-    this.enrichedSearchResult = enrichedSearchResult;
+  public Account displayName(String displayName) {
+    this.displayName = displayName;
     return this;
   }
 
   
-  @ApiModelProperty(value = "Enriched search result")
-  @JsonProperty("enrichedSearchResult")
-  public Object getEnrichedSearchResult() {
-    return enrichedSearchResult;
+  @ApiModelProperty(required = true, value = "Account display name")
+  @JsonProperty(required = true, value = "displayName")
+  @NotNull public String getDisplayName() {
+    return displayName;
   }
 
-  @JsonProperty("enrichedSearchResult")
-  public void setEnrichedSearchResult(Object enrichedSearchResult) {
-    this.enrichedSearchResult = enrichedSearchResult;
+  @JsonProperty(required = true, value = "displayName")
+  public void setDisplayName(String displayName) {
+    this.displayName = displayName;
   }
 
 
@@ -51,21 +64,22 @@ public class SuccessResponseForConsentSearchData   {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    SuccessResponseForConsentSearchData successResponseForConsentSearchData = (SuccessResponseForConsentSearchData) o;
-    return Objects.equals(this.enrichedSearchResult, successResponseForConsentSearchData.enrichedSearchResult);
+    Account account = (Account) o;
+    return Objects.equals(this.displayName, account.displayName) &&
+        super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(enrichedSearchResult);
+    return Objects.hash(displayName, super.hashCode());
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class SuccessResponseForConsentSearchData {\n");
-    
-    sb.append("    enrichedSearchResult: ").append(toIndentedString(enrichedSearchResult)).append("\n");
+    sb.append("class Account {\n");
+    sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+    sb.append("    displayName: ").append(toIndentedString(displayName)).append("\n");
     sb.append("}");
     return sb.toString();
   }

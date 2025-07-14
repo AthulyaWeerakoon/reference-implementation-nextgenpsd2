@@ -1,8 +1,13 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.FailedResponse;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponse;
 import javax.validation.constraints.*;
+import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("Response200ForValidateAuthorizationRequest")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class Response200ForValidateAuthorizationRequest   {
   private String responseId;
   public enum StatusEnum {
@@ -71,10 +76,12 @@ public class Response200ForValidateAuthorizationRequest   {
 
   @JsonCreator
   public Response200ForValidateAuthorizationRequest(
+    @JsonProperty(required = true, value = "responseId") String responseId,
     @JsonProperty(required = true, value = "status") StatusEnum status,
     @JsonProperty(required = true, value = "errorCode") Integer errorCode,
     @JsonProperty(required = true, value = "data") Object data
   ) {
+    this.responseId = responseId;
     this.status = status;
     this.errorCode = errorCode;
     this.data = data;
@@ -88,13 +95,13 @@ public class Response200ForValidateAuthorizationRequest   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("responseId")
-  public String getResponseId() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "responseId")
+  @NotNull public String getResponseId() {
     return responseId;
   }
 
-  @JsonProperty("responseId")
+  @JsonProperty(required = true, value = "responseId")
   public void setResponseId(String responseId) {
     this.responseId = responseId;
   }
@@ -120,7 +127,7 @@ public class Response200ForValidateAuthorizationRequest   {
   }
 
   /**
-   * If any custom error code to return.
+   * If any HTTP error code to return.
    **/
   public Response200ForValidateAuthorizationRequest errorCode(Integer errorCode) {
     this.errorCode = errorCode;
@@ -128,7 +135,7 @@ public class Response200ForValidateAuthorizationRequest   {
   }
 
   
-  @ApiModelProperty(required = true, value = "If any custom error code to return.")
+  @ApiModelProperty(required = true, value = "If any HTTP error code to return.")
   @JsonProperty(required = true, value = "errorCode")
   @NotNull public Integer getErrorCode() {
     return errorCode;

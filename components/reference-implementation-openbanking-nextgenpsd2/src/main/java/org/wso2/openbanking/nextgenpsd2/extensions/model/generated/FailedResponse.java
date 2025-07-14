@@ -1,8 +1,11 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.*;
+import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -12,8 +15,9 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("FailedResponse")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class FailedResponse   {
+  private String responseId;
   public enum StatusEnum {
 
     ERROR(String.valueOf("ERROR"));
@@ -70,13 +74,34 @@ public class FailedResponse   {
 
   @JsonCreator
   public FailedResponse(
+    @JsonProperty(required = true, value = "responseId") String responseId,
     @JsonProperty(required = true, value = "status") StatusEnum status,
     @JsonProperty(required = true, value = "errorCode") Integer errorCode,
     @JsonProperty(required = true, value = "data") Object data
   ) {
+    this.responseId = responseId;
     this.status = status;
     this.errorCode = errorCode;
     this.data = data;
+  }
+
+  /**
+   **/
+  public FailedResponse responseId(String responseId) {
+    this.responseId = responseId;
+    return this;
+  }
+
+  
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "responseId")
+  @NotNull public String getResponseId() {
+    return responseId;
+  }
+
+  @JsonProperty(required = true, value = "responseId")
+  public void setResponseId(String responseId) {
+    this.responseId = responseId;
   }
 
   /**
@@ -100,7 +125,7 @@ public class FailedResponse   {
   }
 
   /**
-   * If any custom error code to return.
+   * If any HTTP error code to return.
    **/
   public FailedResponse errorCode(Integer errorCode) {
     this.errorCode = errorCode;
@@ -108,7 +133,7 @@ public class FailedResponse   {
   }
 
   
-  @ApiModelProperty(required = true, value = "If any custom error code to return.")
+  @ApiModelProperty(required = true, value = "If any HTTP error code to return.")
   @JsonProperty(required = true, value = "errorCode")
   @NotNull public Integer getErrorCode() {
     return errorCode;
@@ -149,14 +174,15 @@ public class FailedResponse   {
       return false;
     }
     FailedResponse failedResponse = (FailedResponse) o;
-    return Objects.equals(this.status, failedResponse.status) &&
+    return Objects.equals(this.responseId, failedResponse.responseId) &&
+        Objects.equals(this.status, failedResponse.status) &&
         Objects.equals(this.errorCode, failedResponse.errorCode) &&
         Objects.equals(this.data, failedResponse.data);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(status, errorCode, data);
+    return Objects.hash(responseId, status, errorCode, data);
   }
 
   @Override
@@ -164,6 +190,7 @@ public class FailedResponse   {
     StringBuilder sb = new StringBuilder();
     sb.append("class FailedResponse {\n");
     
+    sb.append("    responseId: ").append(toIndentedString(responseId)).append("\n");
     sb.append("    status: ").append(toIndentedString(status)).append("\n");
     sb.append("    errorCode: ").append(toIndentedString(errorCode)).append("\n");
     sb.append("    data: ").append(toIndentedString(data)).append("\n");

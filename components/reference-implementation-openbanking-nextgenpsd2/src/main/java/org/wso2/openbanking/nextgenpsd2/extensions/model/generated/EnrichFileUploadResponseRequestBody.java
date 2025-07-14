@@ -1,22 +1,36 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.RequestForEnrichFileUploadResponse;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("EnrichFileUploadResponseRequestBody")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class EnrichFileUploadResponseRequestBody   {
   private String requestId;
   private RequestForEnrichFileUploadResponse data;
 
   public EnrichFileUploadResponseRequestBody() {
+  }
+
+  @JsonCreator
+  public EnrichFileUploadResponseRequestBody(
+    @JsonProperty(required = true, value = "requestId") String requestId,
+    @JsonProperty(required = true, value = "data") RequestForEnrichFileUploadResponse data
+  ) {
+    this.requestId = requestId;
+    this.data = data;
   }
 
   /**
@@ -28,13 +42,13 @@ public class EnrichFileUploadResponseRequestBody   {
   }
 
   
-  @ApiModelProperty(example = "Ec1wMjmiG8", value = "A unique correlation identifier")
-  @JsonProperty("requestId")
-  public String getRequestId() {
+  @ApiModelProperty(example = "Ec1wMjmiG8", required = true, value = "A unique correlation identifier")
+  @JsonProperty(required = true, value = "requestId")
+  @NotNull public String getRequestId() {
     return requestId;
   }
 
-  @JsonProperty("requestId")
+  @JsonProperty(required = true, value = "requestId")
   public void setRequestId(String requestId) {
     this.requestId = requestId;
   }
@@ -47,13 +61,13 @@ public class EnrichFileUploadResponseRequestBody   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("data")
-  @Valid public RequestForEnrichFileUploadResponse getData() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "data")
+  @NotNull @Valid public RequestForEnrichFileUploadResponse getData() {
     return data;
   }
 
-  @JsonProperty("data")
+  @JsonProperty(required = true, value = "data")
   public void setData(RequestForEnrichFileUploadResponse data) {
     this.data = data;
   }

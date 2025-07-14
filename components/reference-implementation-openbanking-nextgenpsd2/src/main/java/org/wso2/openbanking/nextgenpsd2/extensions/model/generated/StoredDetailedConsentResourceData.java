@@ -1,18 +1,25 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredAuthorization;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("StoredDetailedConsentResourceData")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class StoredDetailedConsentResourceData   {
   private String id;
   private Object receipt;
@@ -26,6 +33,7 @@ public class StoredDetailedConsentResourceData   {
   private Boolean recurringIndicator;
   private Object attributes;
   private @Valid List<@Valid StoredAuthorization> authorizations = new ArrayList<>();
+  private String fileContent;
 
   public StoredDetailedConsentResourceData() {
   }
@@ -274,6 +282,25 @@ public class StoredDetailedConsentResourceData   {
 
     return this;
   }
+  /**
+   **/
+  public StoredDetailedConsentResourceData fileContent(String fileContent) {
+    this.fileContent = fileContent;
+    return this;
+  }
+
+  
+  @ApiModelProperty(value = "")
+  @JsonProperty("fileContent")
+  public String getFileContent() {
+    return fileContent;
+  }
+
+  @JsonProperty("fileContent")
+  public void setFileContent(String fileContent) {
+    this.fileContent = fileContent;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -295,12 +322,13 @@ public class StoredDetailedConsentResourceData   {
         Objects.equals(this.validityTime, storedDetailedConsentResourceData.validityTime) &&
         Objects.equals(this.recurringIndicator, storedDetailedConsentResourceData.recurringIndicator) &&
         Objects.equals(this.attributes, storedDetailedConsentResourceData.attributes) &&
-        Objects.equals(this.authorizations, storedDetailedConsentResourceData.authorizations);
+        Objects.equals(this.authorizations, storedDetailedConsentResourceData.authorizations) &&
+        Objects.equals(this.fileContent, storedDetailedConsentResourceData.fileContent);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, receipt, createdTime, updatedTime, clientId, type, status, frequency, validityTime, recurringIndicator, attributes, authorizations);
+    return Objects.hash(id, receipt, createdTime, updatedTime, clientId, type, status, frequency, validityTime, recurringIndicator, attributes, authorizations, fileContent);
   }
 
   @Override
@@ -320,6 +348,7 @@ public class StoredDetailedConsentResourceData   {
     sb.append("    recurringIndicator: ").append(toIndentedString(recurringIndicator)).append("\n");
     sb.append("    attributes: ").append(toIndentedString(attributes)).append("\n");
     sb.append("    authorizations: ").append(toIndentedString(authorizations)).append("\n");
+    sb.append("    fileContent: ").append(toIndentedString(fileContent)).append("\n");
     sb.append("}");
     return sb.toString();
   }

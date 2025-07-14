@@ -1,62 +1,88 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePopulateConsentAuthorizeScreenDataConsentData;
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner;
+import javax.validation.constraints.*;
+import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("SuccessResponsePopulateConsentAuthorizeScreenData")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class SuccessResponsePopulateConsentAuthorizeScreenData   {
-  private Object consentData;
-  private Object consumerData;
+  private SuccessResponsePopulateConsentAuthorizeScreenDataConsentData consentData;
+  private @Valid List<@Valid SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner> consumerData = new ArrayList<>();
 
   public SuccessResponsePopulateConsentAuthorizeScreenData() {
   }
 
   /**
-   * consent data to be populated on consent grant UI
    **/
-  public SuccessResponsePopulateConsentAuthorizeScreenData consentData(Object consentData) {
+  public SuccessResponsePopulateConsentAuthorizeScreenData consentData(SuccessResponsePopulateConsentAuthorizeScreenDataConsentData consentData) {
     this.consentData = consentData;
     return this;
   }
 
   
-  @ApiModelProperty(value = "consent data to be populated on consent grant UI")
+  @ApiModelProperty(value = "")
   @JsonProperty("consentData")
-  public Object getConsentData() {
+  @Valid public SuccessResponsePopulateConsentAuthorizeScreenDataConsentData getConsentData() {
     return consentData;
   }
 
   @JsonProperty("consentData")
-  public void setConsentData(Object consentData) {
+  public void setConsentData(SuccessResponsePopulateConsentAuthorizeScreenDataConsentData consentData) {
     this.consentData = consentData;
   }
 
   /**
-   * Data provider&#39;s backend data
+   * List of all user accounts/resources selectable in the UI
    **/
-  public SuccessResponsePopulateConsentAuthorizeScreenData consumerData(Object consumerData) {
+  public SuccessResponsePopulateConsentAuthorizeScreenData consumerData(List<@Valid SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner> consumerData) {
     this.consumerData = consumerData;
     return this;
   }
 
   
-  @ApiModelProperty(value = "Data provider's backend data")
+  @ApiModelProperty(value = "List of all user accounts/resources selectable in the UI")
   @JsonProperty("consumerData")
-  public Object getConsumerData() {
+  @Valid public List<@Valid SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner> getConsumerData() {
     return consumerData;
   }
 
   @JsonProperty("consumerData")
-  public void setConsumerData(Object consumerData) {
+  public void setConsumerData(List<@Valid SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner> consumerData) {
     this.consumerData = consumerData;
   }
 
+  public SuccessResponsePopulateConsentAuthorizeScreenData addConsumerDataItem(SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner consumerDataItem) {
+    if (this.consumerData == null) {
+      this.consumerData = new ArrayList<>();
+    }
+
+    this.consumerData.add(consumerDataItem);
+    return this;
+  }
+
+  public SuccessResponsePopulateConsentAuthorizeScreenData removeConsumerDataItem(SuccessResponsePopulateConsentAuthorizeScreenDataConsumerDataInner consumerDataItem) {
+    if (consumerDataItem != null && this.consumerData != null) {
+      this.consumerData.remove(consumerDataItem);
+    }
+
+    return this;
+  }
 
   @Override
   public boolean equals(Object o) {

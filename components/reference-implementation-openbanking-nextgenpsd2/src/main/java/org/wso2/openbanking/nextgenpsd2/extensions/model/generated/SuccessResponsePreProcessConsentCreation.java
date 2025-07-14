@@ -1,9 +1,12 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.model.generated;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseWithDetailedConsentData;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("SuccessResponsePreProcessConsentCreation")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class SuccessResponsePreProcessConsentCreation   {
   private String responseId;
   public enum StatusEnum {
@@ -69,6 +72,17 @@ public class SuccessResponsePreProcessConsentCreation   {
   public SuccessResponsePreProcessConsentCreation() {
   }
 
+  @JsonCreator
+  public SuccessResponsePreProcessConsentCreation(
+    @JsonProperty(required = true, value = "responseId") String responseId,
+    @JsonProperty(required = true, value = "status") StatusEnum status,
+    @JsonProperty(required = true, value = "data") SuccessResponseWithDetailedConsentData data
+  ) {
+    this.responseId = responseId;
+    this.status = status;
+    this.data = data;
+  }
+
   /**
    **/
   public SuccessResponsePreProcessConsentCreation responseId(String responseId) {
@@ -77,13 +91,13 @@ public class SuccessResponsePreProcessConsentCreation   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("responseId")
-  public String getResponseId() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "responseId")
+  @NotNull public String getResponseId() {
     return responseId;
   }
 
-  @JsonProperty("responseId")
+  @JsonProperty(required = true, value = "responseId")
   public void setResponseId(String responseId) {
     this.responseId = responseId;
   }
@@ -96,13 +110,13 @@ public class SuccessResponsePreProcessConsentCreation   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("status")
-  public StatusEnum getStatus() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "status")
+  @NotNull public StatusEnum getStatus() {
     return status;
   }
 
-  @JsonProperty("status")
+  @JsonProperty(required = true, value = "status")
   public void setStatus(StatusEnum status) {
     this.status = status;
   }
@@ -115,13 +129,13 @@ public class SuccessResponsePreProcessConsentCreation   {
   }
 
   
-  @ApiModelProperty(value = "")
-  @JsonProperty("data")
-  @Valid public SuccessResponseWithDetailedConsentData getData() {
+  @ApiModelProperty(required = true, value = "")
+  @JsonProperty(required = true, value = "data")
+  @NotNull @Valid public SuccessResponseWithDetailedConsentData getData() {
     return data;
   }
 
-  @JsonProperty("data")
+  @JsonProperty(required = true, value = "data")
   public void setData(SuccessResponseWithDetailedConsentData data) {
     this.data = data;
   }
