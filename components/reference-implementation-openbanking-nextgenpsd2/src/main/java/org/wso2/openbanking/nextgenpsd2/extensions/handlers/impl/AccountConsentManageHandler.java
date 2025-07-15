@@ -32,7 +32,6 @@ import org.wso2.openbanking.nextgenpsd2.extensions.enums.AuthTypeEnum;
 import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentStatusEnum;
 import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentTypeEnum;
 import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
@@ -72,7 +71,7 @@ public class AccountConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponsePreProcessConsentCreation handleCreation(PreProcessConsentCreationRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         String requestId = requestBody.getRequestId();
 
         // Skipping idempotency check as it's handled by the accelerator
@@ -175,7 +174,7 @@ public class AccountConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponseForResponseAlternation handleRetrieval(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         String requestId = requestBody.getRequestId();
 
         PreProcessConsentRetrievalData data = requestBody.getData();
@@ -247,7 +246,7 @@ public class AccountConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponseConsentRevocation handleRevocation(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         return CommonConsentValidationUtil.validateRevokeRequestAndReturnResponse(requestBody);
     }
 
@@ -260,7 +259,7 @@ public class AccountConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponseForResponseAlternation enrichCreationResponse(EnrichConsentCreationRequestBody requestBody)
-            throws ApiException {
+            throws BadRequestException {
         SuccessResponseForResponseAlternation validationResponse = new SuccessResponseForResponseAlternation();
         ConsentInitiationUtil.buildResponseAlterationResponseForConsentCreation(requestBody, validationResponse,
                 ConsentTypeEnum.ACCOUNTS.toString());

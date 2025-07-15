@@ -19,7 +19,6 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.handlers.impl;
 
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
@@ -47,7 +46,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponsePreProcessConsentCreation handleCreation(PreProcessConsentCreationRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         // Throws an error since creating auth object for an existing consent is not supported
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -63,7 +62,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponseForResponseAlternation handleRetrieval(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         // Throws an error since auth resources for a consent cannot be retrieved through consent creation
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -78,7 +77,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponseConsentRevocation handleRevocation(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, ApiException {
+            throws ValidationFailureException, BadRequestException {
         // Throws an error since auth resources for a consent cannot be retrieved through consent creation
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -94,7 +93,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponseForResponseAlternation enrichCreationResponse(EnrichConsentCreationRequestBody requestBody)
-            throws ApiException {
+            throws BadRequestException {
         // Throws an error since this should be unreachable
         throw new BadRequestException(ErrorConstants.AUTH_CREATION_NOT_SUPPORTED);
     }
