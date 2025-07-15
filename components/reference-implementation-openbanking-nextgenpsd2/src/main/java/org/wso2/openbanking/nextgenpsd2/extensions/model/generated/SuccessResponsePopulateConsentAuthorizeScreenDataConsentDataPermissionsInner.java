@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("SuccessResponsePopulateConsentAuthorizeScreenData_consentData_permissions_inner")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T16:37:19.273370900+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class SuccessResponsePopulateConsentAuthorizeScreenDataConsentDataPermissionsInner   {
   private String uid;
   private @Valid List<String> displayValues = new ArrayList<>();

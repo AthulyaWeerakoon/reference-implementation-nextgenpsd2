@@ -21,12 +21,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("AuthorizedResources")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-15T13:10:30.062370600+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
 public class AuthorizedResources extends HashMap<String, Object>  {
   private Boolean approval;
   private Boolean isReauthorization;
   private String type;
   private @Valid List<@Valid AuthorizedResourcesAuthorizedDataInner> authorizedData = new ArrayList<>();
+  private Object metadata;
 
   public AuthorizedResources() {
   }
@@ -127,6 +128,26 @@ public class AuthorizedResources extends HashMap<String, Object>  {
 
     return this;
   }
+  /**
+   * Consent authorization related metadata.
+   **/
+  public AuthorizedResources metadata(Object metadata) {
+    this.metadata = metadata;
+    return this;
+  }
+
+  
+  @ApiModelProperty(value = "Consent authorization related metadata.")
+  @JsonProperty("metadata")
+  public Object getMetadata() {
+    return metadata;
+  }
+
+  @JsonProperty("metadata")
+  public void setMetadata(Object metadata) {
+    this.metadata = metadata;
+  }
+
 
   @Override
   public boolean equals(Object o) {
@@ -141,12 +162,13 @@ public class AuthorizedResources extends HashMap<String, Object>  {
         Objects.equals(this.isReauthorization, authorizedResources.isReauthorization) &&
         Objects.equals(this.type, authorizedResources.type) &&
         Objects.equals(this.authorizedData, authorizedResources.authorizedData) &&
+        Objects.equals(this.metadata, authorizedResources.metadata) &&
         super.equals(o);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(approval, isReauthorization, type, authorizedData, super.hashCode());
+    return Objects.hash(approval, isReauthorization, type, authorizedData, metadata, super.hashCode());
   }
 
   @Override
@@ -158,6 +180,7 @@ public class AuthorizedResources extends HashMap<String, Object>  {
     sb.append("    isReauthorization: ").append(toIndentedString(isReauthorization)).append("\n");
     sb.append("    type: ").append(toIndentedString(type)).append("\n");
     sb.append("    authorizedData: ").append(toIndentedString(authorizedData)).append("\n");
+    sb.append("    metadata: ").append(toIndentedString(metadata)).append("\n");
     sb.append("}");
     return sb.toString();
   }
