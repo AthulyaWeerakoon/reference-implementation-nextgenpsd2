@@ -74,8 +74,6 @@ public class ConsentManagementAPIImpl {
         } catch (BadRequestException | ServerErrorException e) {
             log.error("[" + requestId + "] " + "An error occurred creating consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
-        } catch (org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -111,7 +109,7 @@ public class ConsentManagementAPIImpl {
                 JSONObject errorResponse = ErrorUtil.getFormattedFailedResponse(400,
                         ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                                 TPPMessage.CodeEnum.FORMAT_ERROR, ErrorConstants.PAYLOAD_FORMAT_ERROR));
-                return Response.status(Response.Status.OK).entity(errorResponse.toString()).build();
+                return Response.ok().entity(errorResponse.toString()).build();
             }
 
             ConsentManagementValidationHandler consentManagementValidationHandler = CommonConsentValidationUtil
@@ -137,8 +135,6 @@ public class ConsentManagementAPIImpl {
         }  catch (BadRequestException | ServerErrorException e) {
             log.error("[" + requestId + "] " + "An error occurred creating consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
-        } catch (org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -179,8 +175,6 @@ public class ConsentManagementAPIImpl {
         }  catch (BadRequestException | ServerErrorException e) {
             log.error("[" + requestId + "] " + "An error occurred retrieving consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
-        } catch (org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -221,8 +215,6 @@ public class ConsentManagementAPIImpl {
         }  catch (BadRequestException | ServerErrorException e) {
             log.error("[" + requestId + "] " + "An error occurred revoking consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
-        } catch (org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ApiException e) {
-            throw new RuntimeException(e);
         }
     }
 }
