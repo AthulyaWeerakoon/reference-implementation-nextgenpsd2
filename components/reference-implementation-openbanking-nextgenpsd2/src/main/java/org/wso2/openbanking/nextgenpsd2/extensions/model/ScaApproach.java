@@ -18,21 +18,21 @@
 
 package org.wso2.openbanking.nextgenpsd2.extensions.model;
 
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
 
 /**
  * SCA approach class.
  */
 public class ScaApproach {
 
-    private ScaApproachEnum approach;
+    private ExtensionEnums.ScaApproachEnum approach;
     private boolean isDefault;
 
-    public ScaApproachEnum getApproach() {
+    public ExtensionEnums.ScaApproachEnum getApproach() {
         return approach;
     }
 
-    public void setApproach(ScaApproachEnum approach) {
+    public void setApproach(ExtensionEnums.ScaApproachEnum approach) {
         this.approach = approach;
     }
 

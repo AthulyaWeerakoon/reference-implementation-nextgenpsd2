@@ -61,26 +61,26 @@
         <init-param>
             <param-name>jaxrs.serviceClasses</param-name>
             <param-value>
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentCreationApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichConsentCreationResponseApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentRetrievalApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentRevokeApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PopulateConsentAuthorizeScreenApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PersistAuthorizedConsentApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateConsentAccessApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.IssueRefreshTokenApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateAuthorizationRequestApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventCreationApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventPollingApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichEventPollingResponseApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventSubscriptionApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichEventSubscriptionResponseApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessClientCreationApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessClientUpdateApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.MapAcceleratorErrorResponseApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessClientRetrievalApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessApplicationCreationApi,
-                org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessApplicationUpdateApi
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentCreationApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichConsentCreationResponseApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentRetrievalApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentRevokeApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PopulateConsentAuthorizeScreenApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PersistAuthorizedConsentApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateConsentAccessApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.IssueRefreshTokenApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateAuthorizationRequestApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventCreationApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventPollingApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichEventPollingResponseApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventSubscriptionApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichEventSubscriptionResponseApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessClientCreationApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessClientUpdateApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.MapAcceleratorErrorResponseApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessClientRetrievalApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessApplicationCreationApi,
+                org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessApplicationUpdateApi
             </param-value>
         </init-param>
         <init-param>

@@ -20,7 +20,7 @@ package org.wso2.openbanking.nextgenpsd2.extensions.validators.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.wso2.openbanking.nextgenpsd2.extensions.configurations.ConfigurationConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.AccountReference;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.CommonConsentValidationUtil;
@@ -58,7 +58,7 @@ public class AccountReferenceValidator implements ConstraintValidator<ValidAccou
                 return false;
             }
         } else if (keys.size() == 2) {
-            boolean hasCurrency = keys.contains(ConsentExtensionConstants.CURRENCY);
+            boolean hasCurrency = keys.contains(CommonConstants.CURRENCY);
             boolean hasRefType = keys.stream().anyMatch(supportedKeys::contains);
             if (!hasCurrency || !hasRefType) {
                 CommonConsentValidationUtil.setConstrainViolation(context,
@@ -74,7 +74,7 @@ public class AccountReferenceValidator implements ConstraintValidator<ValidAccou
 
         // Ensure reference value is not blank
         for (String key : keys) {
-            if (!ConsentExtensionConstants.CURRENCY.equals(key) && StringUtils.isBlank(props.get(key))) {
+            if (!CommonConstants.CURRENCY.equals(key) && StringUtils.isBlank(props.get(key))) {
                 CommonConsentValidationUtil.setConstrainViolation(context,
                         CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.ACCOUNT_REFERENCE_IS_EMPTY));
                 return false;

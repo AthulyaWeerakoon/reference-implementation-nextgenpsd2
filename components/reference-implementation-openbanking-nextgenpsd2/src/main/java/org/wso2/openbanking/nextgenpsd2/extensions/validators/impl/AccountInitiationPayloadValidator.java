@@ -19,7 +19,7 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.validators.impl;
 
 import org.wso2.openbanking.nextgenpsd2.extensions.configurations.ConfigurationConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.AccountInitiationPayload;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
@@ -84,7 +84,7 @@ public class AccountInitiationPayloadValidator implements
         }
 
         // isValidUntilDateCapEnabled validation
-        LocalDate maximumValidUntil = LocalDate.parse(ConsentExtensionConstants.MAXIMUM_VALID_DATE);
+        LocalDate maximumValidUntil = LocalDate.parse(CommonConstants.MAXIMUM_VALID_DATE);
         if (isValidUntilDateCapEnabled &&
                 (validUntil.isAfter(today.plusDays(validUntilDaysCap)))) {
             /*
@@ -94,7 +94,7 @@ public class AccountInitiationPayloadValidator implements
              */
             validUntil = LocalDate.from(LocalDateTime.now().plusDays(validUntilDaysCap));
         } else if (validUntil.isAfter(maximumValidUntil)) {
-            validUntil = LocalDate.parse(ConsentExtensionConstants.MAXIMUM_VALID_DATE);
+            validUntil = LocalDate.parse(CommonConstants.MAXIMUM_VALID_DATE);
         }
         payload.setValidUntil(validUntil);
 

@@ -20,7 +20,7 @@ package org.wso2.openbanking.nextgenpsd2.extensions.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
 
 /**
  * SCA Method class.
@@ -32,7 +32,7 @@ public class ScaMethod {
     private String authenticationVersion;
     private String authenticationMethodId;
     private String name;
-    private ScaApproachEnum mappedApproach;
+    private ExtensionEnums.ScaApproachEnum mappedApproach;
 
     @JsonProperty("explanation")
     private String description;
@@ -72,11 +72,11 @@ public class ScaMethod {
         this.name = name;
     }
 
-    public ScaApproachEnum getMappedApproach() {
+    public ExtensionEnums.ScaApproachEnum getMappedApproach() {
         return mappedApproach;
     }
 
-    public void setMappedApproach(ScaApproachEnum mappedApproach) {
+    public void setMappedApproach(ExtensionEnums.ScaApproachEnum mappedApproach) {
         this.mappedApproach = mappedApproach;
     }
 

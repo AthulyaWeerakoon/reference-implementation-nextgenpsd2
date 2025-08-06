@@ -20,10 +20,10 @@ package org.wso2.openbanking.nextgenpsd2.extensions.utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredDetailedConsentResourceData;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaMethod;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredDetailedConsentResourceData;
 
 import java.util.ArrayList;
 
@@ -41,9 +41,9 @@ public class FundsConfirmationConsentUtil {
      */
     public static void appendCoFInitiationResponseToPayload(StoredDetailedConsentResourceData createdConsent,
                                                             ArrayList<ScaMethod> scaMethods, JSONObject payload)
-            throws BadRequestException {
-        payload.put(ConsentExtensionConstants.CONSENT_STATUS, createdConsent.getStatus());
-        payload.put(ConsentExtensionConstants.CONSENT_ID, createdConsent.getId());
+            throws ExtensionException {
+        payload.put(CommonConstants.CONSENT_STATUS, createdConsent.getStatus());
+        payload.put(CommonConstants.CONSENT_ID, createdConsent.getId());
 
         JSONArray chosenSCAMethods = new JSONArray();
         for (ScaMethod scaMethod : scaMethods) {
@@ -51,9 +51,9 @@ public class FundsConfirmationConsentUtil {
         }
 
         if (scaMethods.size() > 1) {
-            payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
+            payload.put(CommonConstants.SCA_METHODS, chosenSCAMethods);
         } else {
-            payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+            payload.put(CommonConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
         }
     }
 }

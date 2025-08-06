@@ -21,22 +21,22 @@ package org.wso2.openbanking.nextgenpsd2.extensions.utils;
 import org.json.JSONObject;
 import org.wso2.openbanking.nextgenpsd2.extensions.configurations.ConfigurationConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentTypeEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.EnrichConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredAuthorization;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredDetailedConsentResourceData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternationData;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaApproach;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaMethod;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.EnrichConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredAuthorization;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredDetailedConsentResourceData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternationData;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Util class containing common operations required in consent initiation.
@@ -58,27 +58,27 @@ public class ConsentInitiationUtil {
                                                               JSONObject headers,
                                                               boolean isRedirectPreferred,
                                                               String apiVersion, boolean isSCARequired)
-            throws BadRequestException {
+            throws ExtensionException {
 
         String resourcePath = requestBody.getData().getConsentResourcePath();
-        String locationString = String.format(ConsentExtensionConstants.SELF_LINK_TEMPLATE,
+        String locationString = String.format(CommonConstants.SELF_LINK_TEMPLATE,
                 apiVersion, resourcePath, requestBody.getData().getConsentId());
-        headers.put(ConsentExtensionConstants.LOCATION_HEADER, locationString);
+        headers.put(CommonConstants.LOCATION_HEADER, locationString);
 
         Map<String, Object> scaElements = CommonConsentValidationUtil.getScaApproachAndMethods(isRedirectPreferred,
                 isSCARequired);
         ScaApproach scaApproach = (ScaApproach) scaElements.get(CommonConstants.SCA_APPROACH_KEY);
         ArrayList<ScaMethod> scaMethods =
                 (ArrayList<ScaMethod>) scaElements.get(CommonConstants.SCA_METHODS_KEY);
-        headers.put(ConsentExtensionConstants.ASPSP_SCA_APPROACH, scaApproach.getApproach().toString());
+        headers.put(CommonConstants.ASPSP_SCA_APPROACH, scaApproach.getApproach().toString());
 
         StoredDetailedConsentResourceData createdConsent = requestBody.getData().getConsentResource();
 
-        if (ConsentTypeEnum.ACCOUNTS.toString().equals(consentType)) {
+        if (ExtensionEnums.ConsentTypeEnum.ACCOUNTS.toString().equals(consentType)) {
             AccountConsentUtil.appendAccountInitiationResponseToPayload(createdConsent, scaMethods, payload);
-        } else if (ConsentTypeEnum.PAYMENTS.toString().equals(consentType)) {
+        } else if (ExtensionEnums.ConsentTypeEnum.PAYMENTS.toString().equals(consentType)) {
             PaymentConsentUtil.appendPaymentInitiationResponseToPayload(createdConsent, scaMethods, payload);
-        } else if (ConsentTypeEnum.FUNDS_CONFIRMATION.toString().equals(consentType)) {
+        } else if (ExtensionEnums.ConsentTypeEnum.FUNDS_CONFIRMATION.toString().equals(consentType)) {
             FundsConfirmationConsentUtil.appendCoFInitiationResponseToPayload(createdConsent, scaMethods, payload);
         }
 
@@ -92,7 +92,7 @@ public class ConsentInitiationUtil {
         JSONObject links = getInitiationLinks(false, scaApproach,
                 scaMethods, resourcePath, createdConsent.getId(), authId, consentType);
 
-        payload.put(ConsentExtensionConstants.LINKS, links);
+        payload.put(CommonConstants.LINKS, links);
     }
 
     /**
@@ -110,51 +110,52 @@ public class ConsentInitiationUtil {
     public static JSONObject getInitiationLinks(boolean isTppExplicitAuthorisationPreferred,
                                                 ScaApproach currentScaApproach, List<ScaMethod> currentScaMethods,
                                                 String requestPath, String consentId, String authorisationId,
-                                                String consentType) throws BadRequestException {
+                                                String consentType) throws ExtensionException {
         JSONObject links = new JSONObject();
 
         String apiVersion = CommonConsentValidationUtil.getApiVersion(consentType);
 
-        String selfLink = String.format(ConsentExtensionConstants.SELF_LINK_TEMPLATE,
+        String selfLink = String.format(CommonConstants.SELF_LINK_TEMPLATE,
                 apiVersion, requestPath, consentId);
         JSONObject self = new JSONObject();
-        self.put(ConsentExtensionConstants.HREF, selfLink);
-        links.put(ConsentExtensionConstants.SELF, self);
+        self.put(CommonConstants.HREF, selfLink);
+        links.put(CommonConstants.SELF, self);
 
-        String statusLink = String.format(ConsentExtensionConstants.STATUS_LINK_TEMPLATE,
+        String statusLink = String.format(CommonConstants.STATUS_LINK_TEMPLATE,
                 apiVersion, requestPath, consentId);
         JSONObject status = new JSONObject();
-        status.put(ConsentExtensionConstants.HREF, statusLink);
-        links.put(ConsentExtensionConstants.STATUS, status);
+        status.put(CommonConstants.HREF, statusLink);
+        links.put(CommonConstants.STATUS, status);
 
         if (!isTppExplicitAuthorisationPreferred) {
             // Implicit authorisation
-            String authResourceLink = String.format(ConsentExtensionConstants.AUTH_RESOURCE_LINK_TEMPLATE,
+            String authResourceLink = String.format(CommonConstants.AUTH_RESOURCE_LINK_TEMPLATE,
                     apiVersion, requestPath, consentId, authorisationId);
-            if (ScaApproachEnum.REDIRECT.equals(currentScaApproach.getApproach())) {
+            if (ExtensionEnums.ScaApproachEnum.REDIRECT.equals(currentScaApproach.getApproach())) {
                 // Implicit REDIRECT approach
                 String wellKnown = ConfigurationConstants.OAUTH_METADATA_ENDPOINT;
                 JSONObject scaOAuth = new JSONObject();
-                scaOAuth.put(ConsentExtensionConstants.HREF, wellKnown);
-                links.put(ConsentExtensionConstants.SCA_OAUTH, scaOAuth);
+                scaOAuth.put(CommonConstants.HREF, wellKnown);
+                links.put(CommonConstants.SCA_OAUTH, scaOAuth);
 
                 JSONObject scaStatus = new JSONObject();
-                scaStatus.put(ConsentExtensionConstants.HREF, authResourceLink);
-                links.put(ConsentExtensionConstants.SCA_STATUS, scaStatus);
+                scaStatus.put(CommonConstants.HREF, authResourceLink);
+                links.put(CommonConstants.SCA_STATUS, scaStatus);
             } else {
                 // Implicit but SCA approach not decided
                 if (currentScaMethods.size() > 1) {
                     // If SCA is required and has more than 1 current SCA method
                     JSONObject selectAuthMethod = new JSONObject();
-                    selectAuthMethod.put(ConsentExtensionConstants.HREF, authResourceLink);
-                    links.put(ConsentExtensionConstants.SELECT_AUTH_METHOD, selectAuthMethod);
+                    selectAuthMethod.put(CommonConstants.HREF, authResourceLink);
+                    links.put(CommonConstants.SELECT_AUTH_METHOD, selectAuthMethod);
                 }
             }
         } else {
             // Explicit authorisation not supported
             // Should be unreachable since this is validated upon consent creation
             // ToDo: revisit once auth resources can be added explicitly
-            throw new BadRequestException(ErrorConstants.EXPLICIT_AUTH_NOT_SUPPORTED);
+            throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                    ErrorConstants.EXPLICIT_AUTH_NOT_SUPPORTED);
             /*
             String startAuthorisationsLink = String.format(ConsentExtensionConstants.START_AUTH_LINK_TEMPLATE,
                     apiVersion, requestPath, consentId);
@@ -184,10 +185,10 @@ public class ConsentInitiationUtil {
      *
      * @param requestBody consent initiation enrichment request body
      * @param consentType consent type of initiated consent
-     * @throws BadRequestException if the request body is malformed
+     * @throws ExtensionException if the request body is malformed
      */
     public static SuccessResponseForResponseAlternation buildResponseAlterationResponseForConsentCreation(
-            EnrichConsentCreationRequestBody requestBody, String consentType) throws BadRequestException {
+            EnrichConsentCreationRequestBody requestBody, String consentType) throws ExtensionException {
 
         SuccessResponseForResponseAlternation enrichedResponse = new SuccessResponseForResponseAlternation();
 

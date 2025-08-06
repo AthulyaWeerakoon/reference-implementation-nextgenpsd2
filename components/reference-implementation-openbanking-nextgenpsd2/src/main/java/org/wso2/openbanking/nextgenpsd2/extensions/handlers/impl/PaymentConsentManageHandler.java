@@ -25,34 +25,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.openbanking.nextgenpsd2.extensions.configurations.ConfigurationConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.AuthTypeEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentTypeEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.TransactionStatusEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.Authorization;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.DetailedConsentResourceData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.EnrichConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRetrievalData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredBasicConsentResourceData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternationData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponsePreProcessConsentCreation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseWithDetailedConsentData;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.Authorization;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.DetailedConsentResourceData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.EnrichConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRetrievalData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredBasicConsentResourceData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternationData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePreProcessConsentCreation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseWithDetailedConsentData;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.CommonConsentValidationUtil;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.ConsentInitiationUtil;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.ErrorUtil;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.PaymentConsentUtil;
 
 import java.util.Optional;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Consent handler for payment consents.
@@ -69,7 +67,7 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponsePreProcessConsentCreation handleCreation(PreProcessConsentCreationRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         String requestId = requestBody.getRequestId();
 
         // Skipping idempotency check as it's handled by the accelerator
@@ -120,7 +118,7 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
             DetailedConsentResourceData consentResource = new DetailedConsentResourceData();
             consentResource.setReceipt(requestPayload);
             consentResource.setType(paymentConsentType);
-            consentResource.setStatus(TransactionStatusEnum.RCVD.name());
+            consentResource.setStatus(ExtensionEnums.TransactionStatusEnum.RCVD.name());
 
             // Setting inapplicable consent parameters
             consentResource.setFrequency(0);
@@ -130,10 +128,10 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
             // Build auth resource for implicit authorisation
             // ToDo: Revisit once explicit authorisation is supported
             Authorization authObj = new Authorization();
-            if (headersJSON.has(ConsentExtensionConstants.PSU_ID_HEADER)) {
-                authObj.setUserId(headersJSON.getString(ConsentExtensionConstants.PSU_ID_HEADER));
+            if (headersJSON.has(CommonConstants.PSU_ID_HEADER)) {
+                authObj.setUserId(headersJSON.getString(CommonConstants.PSU_ID_HEADER));
             }
-            authObj.setType(AuthTypeEnum.AUTHORISATION.toString());
+            authObj.setType(ExtensionEnums.AuthTypeEnum.AUTHORISATION.toString());
             String authStatus = CommonConsentValidationUtil.getAuthorizationStatus(isSCARequired, headersJSON);
             authObj.setStatus(authStatus);
 
@@ -156,7 +154,7 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.FORMAT_ERROR, String.format("%s SCA Approach is not supported",
-                                    ScaApproachEnum.DECOUPLED)));
+                                    ExtensionEnums.ScaApproachEnum.DECOUPLED)));
         }
     }
 
@@ -166,11 +164,11 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
      * @param requestBody
      * @return
      * @throws ValidationFailureException
-     * @throws BadRequestException
+     * @throws ExtensionException
      */
     @Override
     public SuccessResponseForResponseAlternation handleRetrieval(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         String requestId = requestBody.getRequestId();
 
         PreProcessConsentRetrievalData data = requestBody.getData();
@@ -192,7 +190,8 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
             requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
         } catch (JSONException e) {
             // Should be unreachable (since insequence always adds client id header)
-            throw new BadRequestException("x-wso2-client-id header not found");
+            throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                    "x-wso2-client-id header not found");
         }
 
         // Validate client
@@ -221,14 +220,14 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
 
         // For status calls
         JSONObject statusPayload = new JSONObject();
-        if (!requestBody.getData().getConsentResourcePath().contains(ConsentExtensionConstants.STATUS)) {
+        if (!requestBody.getData().getConsentResourcePath().contains(CommonConstants.STATUS)) {
             statusPayload = CommonConsentValidationUtil.convertObjectToJson(consentResource.getReceipt());
         }
 
         CommonConsentValidationUtil.appendConsentStatusResponse(consentResource, consentTypeFromPath, statusPayload);
         responseData.setModifiedResponse(statusPayload);
         responseData.setResponseHeaders(CommonConsentValidationUtil.getIdempotencyHeaderJSON(
-                headers.getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER)
+                headers.getString(CommonConstants.X_REQUEST_ID_HEADER)
         ));
 
         validationResponse.setData(responseData);
@@ -244,7 +243,7 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
      */
     @Override
     public SuccessResponseConsentRevocation handleRevocation(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         return CommonConsentValidationUtil.validateRevokeRequestAndReturnResponse(requestBody);
     }
 
@@ -253,12 +252,12 @@ public class PaymentConsentManageHandler implements ConsentManagementValidationH
      *
      * @param requestBody
      * @return
-     * @throws BadRequestException
+     * @throws ExtensionException
      */
     @Override
     public SuccessResponseForResponseAlternation enrichCreationResponse(EnrichConsentCreationRequestBody requestBody)
-            throws BadRequestException {
+            throws ExtensionException {
         return ConsentInitiationUtil.buildResponseAlterationResponseForConsentCreation(requestBody,
-                ConsentTypeEnum.PAYMENTS.toString());
+                ExtensionEnums.ConsentTypeEnum.PAYMENTS.toString());
     }
 }

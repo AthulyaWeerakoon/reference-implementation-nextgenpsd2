@@ -26,25 +26,25 @@
          http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
     <jaxrs:server id="consent" address="/">
         <jaxrs:serviceBeans>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PersistAuthorizedConsentApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentCreationApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichConsentCreationResponseApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentRetrievalApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessConsentRevokeApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PopulateConsentAuthorizeScreenApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateConsentAccessApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.IssueRefreshTokenApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateAuthorizationRequestApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessClientCreationApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessClientUpdateApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventCreationApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventPollingApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichEventPollingResponseApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.ValidateEventSubscriptionApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.EnrichEventSubscriptionResponseApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.MapAcceleratorErrorResponseApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessApplicationCreationApi"/>
-            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.api.generated.PreProcessApplicationUpdateApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PersistAuthorizedConsentApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentCreationApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichConsentCreationResponseApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentRetrievalApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessConsentRevokeApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PopulateConsentAuthorizeScreenApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateConsentAccessApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.IssueRefreshTokenApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateAuthorizationRequestApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessClientCreationApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessClientUpdateApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventCreationApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventPollingApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichEventPollingResponseApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.ValidateEventSubscriptionApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.EnrichEventSubscriptionResponseApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.MapAcceleratorErrorResponseApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessApplicationCreationApi"/>
+            <bean class="org.wso2.openbanking.nextgenpsd2.extensions.generated.api.PreProcessApplicationUpdateApi"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>

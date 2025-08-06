@@ -18,15 +18,14 @@
 
 package org.wso2.openbanking.nextgenpsd2.extensions.handlers;
 
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ServerErrorException;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.EnrichConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePreProcessConsentCreation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.EnrichConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponsePreProcessConsentCreation;
 
 /**
  * Consent handler interface for processing consent related requests.
@@ -34,11 +33,11 @@ import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessRespon
 public interface ConsentManagementValidationHandler {
 
     SuccessResponsePreProcessConsentCreation handleCreation(PreProcessConsentCreationRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException, ServerErrorException;
+            throws ValidationFailureException, ExtensionException;
     SuccessResponseForResponseAlternation enrichCreationResponse(EnrichConsentCreationRequestBody requestBody)
-            throws BadRequestException, ServerErrorException;
+            throws ExtensionException;
     SuccessResponseForResponseAlternation handleRetrieval(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException, ServerErrorException;
+            throws ValidationFailureException, ExtensionException;
     SuccessResponseConsentRevocation handleRevocation(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException, ServerErrorException;
+            throws ValidationFailureException, ExtensionException;
 }

@@ -22,18 +22,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredDetailedConsentResourceData;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.BulkPaymentInitiationPayload;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.PeriodicPaymentInitiationPayload;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaMethod;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.SinglePaymentInitiationPayload;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredDetailedConsentResourceData;
 
 import java.util.ArrayList;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Utility class for payment consent management.
@@ -48,19 +49,19 @@ public class PaymentConsentUtil {
      * @throws ValidationFailureException if the payment initiation payload is invalid
      */
     public static void validatePaymentInitiationPayload(JSONObject requestPayload, String resourcePath)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         switch (CommonConsentValidationUtil.getServiceDifferentiatingRequestPath(resourcePath)) {
-            case ConsentExtensionConstants.PAYMENTS_SERVICE_PATH:
+            case CommonConstants.PAYMENTS_SERVICE_PATH:
                 CommonConsentValidationUtil
                         .validateJSONFromModel(requestPayload.toString(), SinglePaymentInitiationPayload.class);
                 break;
 
-            case ConsentExtensionConstants.BULK_PAYMENTS_SERVICE_PATH:
+            case CommonConstants.BULK_PAYMENTS_SERVICE_PATH:
                 CommonConsentValidationUtil
                         .validateJSONFromModel(requestPayload.toString(), BulkPaymentInitiationPayload.class);
                 break;
 
-            case ConsentExtensionConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
+            case CommonConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
                 CommonConsentValidationUtil
                         .validateJSONFromModel(requestPayload.toString(), PeriodicPaymentInitiationPayload.class);
                 break;
@@ -81,9 +82,9 @@ public class PaymentConsentUtil {
      */
     public static void appendPaymentInitiationResponseToPayload(StoredDetailedConsentResourceData createdConsent,
                                                                 ArrayList<ScaMethod> scaMethods, JSONObject payload)
-            throws BadRequestException {
+            throws ExtensionException {
 
-        payload.put(ConsentExtensionConstants.TRANSACTION_STATUS, createdConsent.getStatus());
+        payload.put(CommonConstants.TRANSACTION_STATUS, createdConsent.getStatus());
         payload.put(CommonConstants.PAYMENT_ID, createdConsent.getId());
 
         JSONArray chosenSCAMethods = new JSONArray();
@@ -92,9 +93,9 @@ public class PaymentConsentUtil {
         }
 
         if (scaMethods.size() > 1) {
-            payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
+            payload.put(CommonConstants.SCA_METHODS, chosenSCAMethods);
         } else {
-            payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+            payload.put(CommonConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
         }
     }
 
@@ -106,7 +107,7 @@ public class PaymentConsentUtil {
      */
     public static Object getPaymentProductAttribute(String consentResourcePath) {
         JSONObject attributesJSON = new JSONObject();
-        attributesJSON.put(ConsentExtensionConstants.PAYMENT_PRODUCT_CC, getPaymentProduct(consentResourcePath));
+        attributesJSON.put(CommonConstants.PAYMENT_PRODUCT_CC, getPaymentProduct(consentResourcePath));
         return attributesJSON;
     }
 
@@ -127,21 +128,21 @@ public class PaymentConsentUtil {
      * @param consentResourcePath consent resource path
      * @throws ValidationFailureException if stored payment product does not match one specified in consent resource
      * path
-     * @throws BadRequestException is payment product is missing in consent attributes
+     * @throws ExtensionException is payment product is missing in consent attributes
      */
     public static void validatePaymentProductFromAttributes(Object attributes, String consentResourcePath)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         String paymentProductFromPath = getPaymentProduct(consentResourcePath);
 
         // Extract payment product from attributes
         String paymentProductFromAttributes;
         try {
             JSONObject attributesJSON = CommonConsentValidationUtil.convertObjectToJson(attributes);
-            paymentProductFromAttributes = attributesJSON.getString(ConsentExtensionConstants.PAYMENT_PRODUCT_CC);
+            paymentProductFromAttributes = attributesJSON.getString(CommonConstants.PAYMENT_PRODUCT_CC);
         } catch (JSONException e) {
             // Should be unreachable as payment product gets added as an attribute at initiation
-            throw new BadRequestException("Payment product not stored at consent initiation. Product validation" +
-                    " failed.");
+            throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                    "Payment product not stored at consent initiation. Product validation failed.");
         }
 
         if (!paymentProductFromAttributes.equals(paymentProductFromPath)) {

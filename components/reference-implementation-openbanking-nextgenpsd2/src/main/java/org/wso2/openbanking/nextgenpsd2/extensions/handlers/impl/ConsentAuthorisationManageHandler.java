@@ -19,17 +19,19 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.handlers.impl;
 
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.EnrichConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponsePreProcessConsentCreation;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.EnrichConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePreProcessConsentCreation;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.ErrorUtil;
+
+import javax.ws.rs.core.Response;
 
 /**
  * Consent authorisation handler for explicit authorisation.
@@ -46,7 +48,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponsePreProcessConsentCreation handleCreation(PreProcessConsentCreationRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         // Throws an error since creating auth object for an existing consent is not supported
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -62,7 +64,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponseForResponseAlternation handleRetrieval(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         // Throws an error since auth resources for a consent cannot be retrieved through consent creation
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -77,7 +79,7 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      */
     @Override
     public SuccessResponseConsentRevocation handleRevocation(PreProcessConsentRequestBody requestBody)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         // Throws an error since auth resources for a consent cannot be retrieved through consent creation
         throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                 ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -89,12 +91,13 @@ public class ConsentAuthorisationManageHandler implements ConsentManagementValid
      *
      * @param requestBody
      * @return
-     * @throws BadRequestException
+     * @throws ExtensionException
      */
     @Override
     public SuccessResponseForResponseAlternation enrichCreationResponse(EnrichConsentCreationRequestBody requestBody)
-            throws BadRequestException {
+            throws ExtensionException {
         // Throws an error since this should be unreachable
-        throw new BadRequestException(ErrorConstants.AUTH_CREATION_NOT_SUPPORTED);
+        throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                ErrorConstants.AUTH_CREATION_NOT_SUPPORTED);
     }
 }

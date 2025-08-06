@@ -18,7 +18,7 @@
 
 package org.wso2.openbanking.nextgenpsd2.extensions.validators.impl;
 
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.PeriodicPaymentInitiationPayload;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.CommonConsentValidationUtil;
@@ -67,7 +67,7 @@ public class PeriodicPaymentInitiationPayloadValidator implements
         }
 
         // Validate frequency is supported
-        if (payload.getFrequency() != null && !ConsentExtensionConstants.SUPPORTED_PERIODIC_PAYMENT_FREQUENCY_CODES
+        if (payload.getFrequency() != null && !CommonConstants.SUPPORTED_PERIODIC_PAYMENT_FREQUENCY_CODES
                 .contains(payload.getFrequency())) {
             CommonConsentValidationUtil.setConstrainViolation(context,
                     CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.FREQUENCY_UNSUPPORTED));
@@ -76,8 +76,8 @@ public class PeriodicPaymentInitiationPayloadValidator implements
 
         // Validate executionRule if present
         if (payload.getExecutionRule() != null &&
-                !(ConsentExtensionConstants.FOLLOWING_EXECUTION_RULE.equals(payload.getExecutionRule())
-                        || ConsentExtensionConstants.PRECEDING_EXECUTION_RULE.equals(payload.getExecutionRule()))) {
+                !(CommonConstants.FOLLOWING_EXECUTION_RULE.equals(payload.getExecutionRule())
+                        || CommonConstants.PRECEDING_EXECUTION_RULE.equals(payload.getExecutionRule()))) {
             CommonConsentValidationUtil.setConstrainViolation(context,
                     CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.INVALID_EXECUTION_RULE));
             return false;

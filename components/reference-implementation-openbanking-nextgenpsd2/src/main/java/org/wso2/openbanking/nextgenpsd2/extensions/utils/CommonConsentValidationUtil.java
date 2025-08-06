@@ -30,15 +30,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.openbanking.nextgenpsd2.extensions.configurations.ConfigurationConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentStatusEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentTypeEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaApproachEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ScaStatusEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.TransactionStatusEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRetrievalData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredBasicConsentResourceData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocationData;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.impl.AccountConsentManageHandler;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.impl.ConsentAuthorisationManageHandler;
@@ -47,11 +47,6 @@ import org.wso2.openbanking.nextgenpsd2.extensions.handlers.impl.PaymentConsentM
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaApproach;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaMethod;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRetrievalData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredBasicConsentResourceData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocationData;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -69,6 +64,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.ws.rs.core.Response;
 
 /**
  * Common utility class for handling consent operations.
@@ -110,9 +106,9 @@ public class CommonConsentValidationUtil {
      *
      * @param object json convertible object
      * @return JSONObject of passed object
-     * @throws BadRequestException if the passed object cannot be converted to JSON
+     * @throws ExtensionException if the passed object cannot be converted to JSON
      */
-    public static JSONObject convertObjectToJson(Object object) throws BadRequestException {
+    public static JSONObject convertObjectToJson(Object object) throws ExtensionException {
         String jsonString;
 
         try {
@@ -122,7 +118,8 @@ public class CommonConsentValidationUtil {
             // Parse JSON string to JSONObject
             return new JSONObject(jsonString);
         } catch (JsonProcessingException | JSONException e) {
-            throw new BadRequestException(e.getMessage().replaceAll("[\r\n]", ""), e);
+            throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                    e.getMessage().replaceAll("[\r\n]", ""), e);
         }
     }
 
@@ -136,16 +133,16 @@ public class CommonConsentValidationUtil {
 
         String accountReference = "";
 
-        if (accountRefObject.has(ConsentExtensionConstants.IBAN)) {
-            accountReference = accountRefObject.getString(ConsentExtensionConstants.IBAN);
-        } else if (accountRefObject.has(ConsentExtensionConstants.BBAN)) {
-            accountReference = accountRefObject.getString(ConsentExtensionConstants.BBAN);
-        } else if (accountRefObject.has(ConsentExtensionConstants.PAN)) {
-            accountReference = accountRefObject.getString(ConsentExtensionConstants.PAN);
-        } else if (accountRefObject.has(ConsentExtensionConstants.MASKED_PAN)) {
-            accountReference = accountRefObject.getString(ConsentExtensionConstants.MASKED_PAN);
-        } else if (accountRefObject.has(ConsentExtensionConstants.MSISDN)) {
-            accountReference = accountRefObject.getString(ConsentExtensionConstants.MSISDN);
+        if (accountRefObject.has(CommonConstants.IBAN)) {
+            accountReference = accountRefObject.getString(CommonConstants.IBAN);
+        } else if (accountRefObject.has(CommonConstants.BBAN)) {
+            accountReference = accountRefObject.getString(CommonConstants.BBAN);
+        } else if (accountRefObject.has(CommonConstants.PAN)) {
+            accountReference = accountRefObject.getString(CommonConstants.PAN);
+        } else if (accountRefObject.has(CommonConstants.MASKED_PAN)) {
+            accountReference = accountRefObject.getString(CommonConstants.MASKED_PAN);
+        } else if (accountRefObject.has(CommonConstants.MSISDN)) {
+            accountReference = accountRefObject.getString(CommonConstants.MSISDN);
         }
 
         return accountReference;
@@ -159,17 +156,17 @@ public class CommonConsentValidationUtil {
      * @return api version
      */
     public static String getApiVersion(String consentType) {
-        if (ConsentTypeEnum.ACCOUNTS.toString().equals(consentType)) {
+        if (ExtensionEnums.ConsentTypeEnum.ACCOUNTS.toString().equals(consentType)) {
             return ConfigurationConstants.AIS_API_VERSION;
         }
 
-        if (ConsentTypeEnum.PAYMENTS.toString().equals(consentType)
-                || ConsentTypeEnum.BULK_PAYMENTS.toString().equals(consentType)
-                || ConsentTypeEnum.PERIODIC_PAYMENTS.toString().equals(consentType)) {
+        if (ExtensionEnums.ConsentTypeEnum.PAYMENTS.toString().equals(consentType)
+                || ExtensionEnums.ConsentTypeEnum.BULK_PAYMENTS.toString().equals(consentType)
+                || ExtensionEnums.ConsentTypeEnum.PERIODIC_PAYMENTS.toString().equals(consentType)) {
             return ConfigurationConstants.PIS_API_VERSION;
         }
 
-        if (ConsentTypeEnum.FUNDS_CONFIRMATION.toString().equals(consentType)) {
+        if (ExtensionEnums.ConsentTypeEnum.FUNDS_CONFIRMATION.toString().equals(consentType)) {
             return ConfigurationConstants.PIIS_API_VERSION;
         }
 
@@ -184,9 +181,10 @@ public class CommonConsentValidationUtil {
      */
     public static String getAuthorizationStatus(boolean isSCARequired, JSONObject headers) {
         return (isSCARequired) ?
-                ScaStatusEnum.SCA_METHOD_SELECTED.toString() :
-                headers.has(ConsentExtensionConstants.PSU_ID_HEADER) ?
-                        ScaStatusEnum.PSU_IDENTIFIED.toString() : ScaStatusEnum.RECEIVED.toString();
+                ExtensionEnums.ScaStatusEnum.SCA_METHOD_SELECTED.toString() :
+                headers.has(CommonConstants.PSU_ID_HEADER) ?
+                        ExtensionEnums.ScaStatusEnum.PSU_IDENTIFIED.toString() :
+                        ExtensionEnums.ScaStatusEnum.RECEIVED.toString();
     }
 
     /**
@@ -196,19 +194,19 @@ public class CommonConsentValidationUtil {
      * @return ServiceHandler
      */
     public static ConsentManagementValidationHandler getConsentManagementResponseHandler(String requestPath)
-            throws BadRequestException, ValidationFailureException {
+            throws ExtensionException, ValidationFailureException {
 
         switch (getServiceDifferentiatingRequestPath(requestPath)) {
-            case ConsentExtensionConstants.ACCOUNTS_CONSENT_PATH:
+            case CommonConstants.ACCOUNTS_CONSENT_PATH:
                 return new AccountConsentManageHandler();
-            case ConsentExtensionConstants.PAYMENTS_SERVICE_PATH:
-            case ConsentExtensionConstants.BULK_PAYMENTS_SERVICE_PATH:
-            case ConsentExtensionConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
+            case CommonConstants.PAYMENTS_SERVICE_PATH:
+            case CommonConstants.BULK_PAYMENTS_SERVICE_PATH:
+            case CommonConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
                 return new PaymentConsentManageHandler();
-            case ConsentExtensionConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH:
+            case CommonConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH:
                 return new FundsConfirmationConsentManageHandler();
-            case ConsentExtensionConstants.EXPLICIT_AUTHORISATION_PATH_END:
-            case ConsentExtensionConstants.PAYMENT_EXPLICIT_CANCELLATION_AUTHORISATION_PATH_END:
+            case CommonConstants.EXPLICIT_AUTHORISATION_PATH_END:
+            case CommonConstants.PAYMENT_EXPLICIT_CANCELLATION_AUTHORISATION_PATH_END:
                 return new ConsentAuthorisationManageHandler();
             default:
                 throw new ValidationFailureException(ValidationFailureException.ErrorCode.NOT_FOUND,
@@ -229,7 +227,7 @@ public class CommonConsentValidationUtil {
         String authorisationConsentType;
 
         if (pathElements.length > 1) {
-            if (ConsentExtensionConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH.equals(pathElements[1])) {
+            if (CommonConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH.equals(pathElements[1])) {
                 authorisationConsentType = pathElements[1];
             } else {
                 authorisationConsentType = pathElements[0];
@@ -239,16 +237,16 @@ public class CommonConsentValidationUtil {
         }
 
         switch (authorisationConsentType) {
-            case ConsentExtensionConstants.PAYMENTS_SERVICE_PATH:
-                return ConsentTypeEnum.PAYMENTS.toString();
-            case ConsentExtensionConstants.BULK_PAYMENTS_SERVICE_PATH:
-                return ConsentTypeEnum.BULK_PAYMENTS.toString();
-            case ConsentExtensionConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
-                return ConsentTypeEnum.PERIODIC_PAYMENTS.toString();
-            case ConsentExtensionConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH:
-                return ConsentTypeEnum.FUNDS_CONFIRMATION.toString();
+            case CommonConstants.PAYMENTS_SERVICE_PATH:
+                return ExtensionEnums.ConsentTypeEnum.PAYMENTS.toString();
+            case CommonConstants.BULK_PAYMENTS_SERVICE_PATH:
+                return ExtensionEnums.ConsentTypeEnum.BULK_PAYMENTS.toString();
+            case CommonConstants.PERIODIC_PAYMENTS_SERVICE_PATH:
+                return ExtensionEnums.ConsentTypeEnum.PERIODIC_PAYMENTS.toString();
+            case CommonConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH:
+                return ExtensionEnums.ConsentTypeEnum.FUNDS_CONFIRMATION.toString();
             default:
-                return ConsentTypeEnum.ACCOUNTS.toString();
+                return ExtensionEnums.ConsentTypeEnum.ACCOUNTS.toString();
         }
     }
 
@@ -262,12 +260,12 @@ public class CommonConsentValidationUtil {
     public static void appendConsentStatusResponse(StoredBasicConsentResourceData consentResource,
                                                    String consentType, JSONObject payloadToSend) {
 
-        if (StringUtils.equals(ConsentTypeEnum.ACCOUNTS.toString(), consentType)
-                || StringUtils.equals(ConsentTypeEnum.FUNDS_CONFIRMATION.toString(), consentType)) {
-            payloadToSend.put(ConsentExtensionConstants.CONSENT_STATUS,
+        if (StringUtils.equals(ExtensionEnums.ConsentTypeEnum.ACCOUNTS.toString(), consentType)
+                || StringUtils.equals(ExtensionEnums.ConsentTypeEnum.FUNDS_CONFIRMATION.toString(), consentType)) {
+            payloadToSend.put(CommonConstants.CONSENT_STATUS,
                     consentResource.getStatus());
         } else {
-            payloadToSend.put(ConsentExtensionConstants.TRANSACTION_STATUS,
+            payloadToSend.put(CommonConstants.TRANSACTION_STATUS,
                     consentResource.getStatus());
         }
     }
@@ -312,7 +310,7 @@ public class CommonConsentValidationUtil {
      * @param scaApproachEnum the SCA approach to find
      * @return found SCA approach
      */
-    public static ScaApproach getScaApproach(ScaApproachEnum scaApproachEnum) {
+    public static ScaApproach getScaApproach(ExtensionEnums.ScaApproachEnum scaApproachEnum) {
         List<ScaApproach> scaApproaches = getSupportedScaApproaches();
 
         for (ScaApproach scaApproach : scaApproaches) {
@@ -338,14 +336,14 @@ public class CommonConsentValidationUtil {
         List<ScaMethod> currentScaMethods = new ArrayList<>();
 
         if (Boolean.TRUE.equals(isTppRedirectPreferred)) {
-            currentScaApproach = getScaApproach(ScaApproachEnum.REDIRECT);
+            currentScaApproach = getScaApproach(ExtensionEnums.ScaApproachEnum.REDIRECT);
             if (isScaRequired) {
-                currentScaMethods.add(getScaMethod(ScaApproachEnum.REDIRECT));
+                currentScaMethods.add(getScaMethod(ExtensionEnums.ScaApproachEnum.REDIRECT));
             }
         } else if (Boolean.FALSE.equals(isTppRedirectPreferred)) {
-            currentScaApproach = getScaApproach(ScaApproachEnum.DECOUPLED);
+            currentScaApproach = getScaApproach(ExtensionEnums.ScaApproachEnum.DECOUPLED);
             if (isScaRequired) {
-                currentScaMethods.add(getScaMethod(ScaApproachEnum.DECOUPLED));
+                currentScaMethods.add(getScaMethod(ExtensionEnums.ScaApproachEnum.DECOUPLED));
             }
         } else {
             // When TPP-Redirect-Preferred header is not sent
@@ -385,7 +383,7 @@ public class CommonConsentValidationUtil {
      * @param scaApproachEnum the SCA method to find
      * @return found SCA method
      */
-    public static ScaMethod getScaMethod(ScaApproachEnum scaApproachEnum) {
+    public static ScaMethod getScaMethod(ExtensionEnums.ScaApproachEnum scaApproachEnum) {
         List<ScaMethod> scaMethods = getSupportedScaMethods();
 
         for (ScaMethod scaMethod : scaMethods) {
@@ -412,9 +410,9 @@ public class CommonConsentValidationUtil {
 
         String[] requestPathArray = requestPath.split("/");
 
-        if (StringUtils.contains(requestPath, ConsentExtensionConstants.EXPLICIT_AUTHORISATION_PATH_END)
+        if (StringUtils.contains(requestPath, CommonConstants.EXPLICIT_AUTHORISATION_PATH_END)
                 || StringUtils.contains(requestPath,
-                ConsentExtensionConstants.PAYMENT_EXPLICIT_CANCELLATION_AUTHORISATION_PATH_END)) {
+                CommonConstants.PAYMENT_EXPLICIT_CANCELLATION_AUTHORISATION_PATH_END)) {
             /*
             Example request paths applicable here:
             1) consents/{consentId}/authorisations
@@ -422,8 +420,8 @@ public class CommonConsentValidationUtil {
             3) {payment-service}/{payment-product}/{paymentId}/authorisations
             4) consents/confirmation-of-funds/{consentId}/authorisations
              */
-            if (StringUtils.equals(ConsentExtensionConstants.ACCOUNTS_CONSENT_PATH, requestPathArray[0])
-                    && !StringUtils.equals(ConsentExtensionConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH,
+            if (StringUtils.equals(CommonConstants.ACCOUNTS_CONSENT_PATH, requestPathArray[0])
+                    && !StringUtils.equals(CommonConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH,
                     requestPathArray[1])) {
                 /*
                 Example request paths applicable here:
@@ -447,7 +445,7 @@ public class CommonConsentValidationUtil {
         3) consents/confirmation-of-funds
          */
         if (requestPathArray.length > 1) {
-            if (ConsentExtensionConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH.equals(requestPathArray[1])) {
+            if (CommonConstants.FUNDS_CONFIRMATIONS_SERVICE_PATH.equals(requestPathArray[1])) {
                 /*
                 Example request paths applicable here:
                 1) consents/confirmation-of-funds
@@ -485,7 +483,7 @@ public class CommonConsentValidationUtil {
             scaMethod.setAuthenticationVersion(supportedScaMethod.get(CommonConstants.SCA_VERSION));
             scaMethod.setAuthenticationMethodId(supportedScaMethod.get(CommonConstants.SCA_ID));
             scaMethod.setName(supportedScaMethod.get(CommonConstants.SCA_NAME));
-            scaMethod.setMappedApproach(ScaApproachEnum.fromValue(supportedScaMethod
+            scaMethod.setMappedApproach(ExtensionEnums.ScaApproachEnum.fromValue(supportedScaMethod
                     .get(CommonConstants.SCA_MAPPED_APPROACH)));
             scaMethod.setDescription(supportedScaMethod.get(CommonConstants.SCA_DESCRIPTION));
             scaMethod.setDefault(Boolean.parseBoolean(supportedScaMethod.get(CommonConstants.SCA_DEFAULT)));
@@ -507,7 +505,8 @@ public class CommonConsentValidationUtil {
         for (Map<String, String> supportedScaApproach : ConfigurationConstants.SUPPORTED_SCA_APPROACHES) {
             ScaApproach scaApproach = new ScaApproach();
 
-            scaApproach.setApproach(ScaApproachEnum.fromValue(supportedScaApproach.get(CommonConstants.SCA_NAME)));
+            scaApproach.setApproach(ExtensionEnums.ScaApproachEnum.fromValue(
+                    supportedScaApproach.get(CommonConstants.SCA_NAME)));
             scaApproach.setDefault(Boolean.parseBoolean(supportedScaApproach.get(CommonConstants.SCA_DEFAULT)));
 
             supportedScaApproaches.add(scaApproach);
@@ -527,7 +526,7 @@ public class CommonConsentValidationUtil {
         List<String> configuredAccountRefTypes = ConfigurationConstants.SUPPORTED_ACC_REFERNCE_TYPES;
         for (String accountRef : accountRefKeys) {
             // Skipping currency since it is not an account reference type
-            if (StringUtils.equals(accountRef, ConsentExtensionConstants.CURRENCY)) {
+            if (StringUtils.equals(accountRef, CommonConstants.CURRENCY)) {
                 continue;
             }
             if (!configuredAccountRefTypes.contains(accountRef)) {
@@ -547,9 +546,9 @@ public class CommonConsentValidationUtil {
         log.debug("[" + requestId + "] " + "Determining whether the TPP-Redirect-Preferred header is true or false " +
                 "or not present");
         if (checkCaseIgnoredHeader(requestId, headersJSON,
-                ConsentExtensionConstants.TPP_REDIRECT_PREFERRED_HEADER)) {
+                CommonConstants.TPP_REDIRECT_PREFERRED_HEADER)) {
             return Optional.of(Boolean.parseBoolean(headersJSON
-                    .getString(ConsentExtensionConstants.TPP_REDIRECT_PREFERRED_HEADER)));
+                    .getString(CommonConstants.TPP_REDIRECT_PREFERRED_HEADER)));
         }
 
         return Optional.empty();
@@ -573,11 +572,11 @@ public class CommonConsentValidationUtil {
      * @param errorMessage error message for the error to throw is parsing failed
      * @return string parsed to a LocalData object
      * @throws ValidationFailureException if parsing failed
-     * @throws BadRequestException if construction of error in nextGenPSD2 format failed
+     * @throws ExtensionException if construction of error in nextGenPSD2 format failed
      */
     public static LocalDate parseDateToISO(String dateToParse, TPPMessage.CodeEnum errorCode,
                                            String errorMessage)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         LocalDate parsedDate;
 
@@ -598,7 +597,7 @@ public class CommonConsentValidationUtil {
      * @param accountRefObject account reference object
      */
     public static void validateAccountRefObject(JSONObject accountRefObject)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         if (accountRefObject == null) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
@@ -613,7 +612,7 @@ public class CommonConsentValidationUtil {
                 isAccountReferenceValid = false;
             }
         } else if (accountRefKeys.size() == 2) {
-            if (!accountRefKeys.contains(ConsentExtensionConstants.CURRENCY)
+            if (!accountRefKeys.contains(CommonConstants.CURRENCY)
                     || hasUnSupportedAccountRefTypes(accountRefKeys)) {
                 isAccountReferenceValid = false;
             }
@@ -636,7 +635,7 @@ public class CommonConsentValidationUtil {
     }
 
     public static void validateRequestIdentificationHeader(Object headers)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         // To allow idempotency header validation it needs to be forwarded
         // Therefore X-Request-ID needs to be added to the configuration in the IS deployment.toml
         // [financial_services.consent.manage_extension]
@@ -645,14 +644,14 @@ public class CommonConsentValidationUtil {
         // Assuming the accelerator only forwards (even empty) JSON object
         JSONObject headersJSON = convertObjectToJson(headers);
 
-        if (!headersJSON.has(ConsentExtensionConstants.X_REQUEST_ID_HEADER)) {
+        if (!headersJSON.has(CommonConstants.X_REQUEST_ID_HEADER)) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.FORMAT_ERROR, ErrorConstants.X_REQUEST_ID_MISSING));
         }
 
         if (!CommonConsentValidationUtil.isValidUuid(headersJSON
-                .getString(ConsentExtensionConstants.X_REQUEST_ID_HEADER))) {
+                .getString(CommonConstants.X_REQUEST_ID_HEADER))) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.FORMAT_ERROR, ErrorConstants.X_REQUEST_ID_INVALID));
@@ -665,17 +664,17 @@ public class CommonConsentValidationUtil {
      * @param headers request headers
      */
     public static void validatePsuIpAddress(String requestId, JSONObject headers)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         log.debug("[" + requestId + "] " + "Validating PSU-IP-Address header");
-        if (headers.has(ConsentExtensionConstants.PSU_IP_ADDRESS_HEADER)) {
-            String psuIpAddress = headers.getString(ConsentExtensionConstants.PSU_IP_ADDRESS_HEADER);
+        if (headers.has(CommonConstants.PSU_IP_ADDRESS_HEADER)) {
+            String psuIpAddress = headers.getString(CommonConstants.PSU_IP_ADDRESS_HEADER);
 
             if (StringUtils.isEmpty(psuIpAddress)) {
                 throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                         ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                                 TPPMessage.CodeEnum.FORMAT_ERROR, String.format("Invalid %s header",
-                                        ConsentExtensionConstants.PSU_IP_ADDRESS_PROPER_CASE_HEADER)
+                                        CommonConstants.PSU_IP_ADDRESS_PROPER_CASE_HEADER)
                 ));
             }
         } else {
@@ -691,28 +690,28 @@ public class CommonConsentValidationUtil {
      * @param headers request headers
      */
     public static void validateTppRedirectPreferredHeader(String requestId, JSONObject headers)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         log.debug("[" + requestId + "] " + "Validating TPP-Redirect-Preferred header according to the specification");
         Optional<Boolean> isRedirectPreferred = isTppRedirectPreferred(requestId, headers);
 
         if ((isRedirectPreferred.isPresent() && BooleanUtils.isTrue(isRedirectPreferred.get()))
-                && getScaApproach(ScaApproachEnum.REDIRECT) == null) {
+                && getScaApproach(ExtensionEnums.ScaApproachEnum.REDIRECT) == null) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.FORMAT_ERROR, String.format("%s SCA Approach is not supported",
-                                    ScaApproachEnum.REDIRECT)));
+                                    ExtensionEnums.ScaApproachEnum.REDIRECT)));
         }
 
         if ((isRedirectPreferred.isPresent() && BooleanUtils.isFalse(isRedirectPreferred.get()))
-                && getScaApproach(ScaApproachEnum.DECOUPLED) == null) {
+                && getScaApproach(ExtensionEnums.ScaApproachEnum.DECOUPLED) == null) {
 
             //ToDo: Since decoupled approach is not supported yet, an error is thrown if the redirect header is false.
             //issue: https://github.com/wso2-enterprise/financial-open-banking/issues/6858
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.BAD_REQUEST,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.FORMAT_ERROR, String.format("%s SCA Approach is not supported",
-                                    ScaApproachEnum.DECOUPLED)));
+                                    ExtensionEnums.ScaApproachEnum.DECOUPLED)));
         }
     }
 
@@ -723,7 +722,7 @@ public class CommonConsentValidationUtil {
      * @param consentClientId    the client id of the current consent
      */
     public static void validateClient(String registeredClientId, String consentClientId)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         if (!StringUtils.equals(registeredClientId, consentClientId)) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.FORBIDDEN,
@@ -739,7 +738,7 @@ public class CommonConsentValidationUtil {
      * @param typeOfRetrievedConsent the consent type of the current consent
      */
     public static void validateConsentType(String requestConsentType, String typeOfRetrievedConsent)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
 
         if (!StringUtils.equals(requestConsentType, typeOfRetrievedConsent)) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.UNAUTHORIZED,
@@ -750,7 +749,7 @@ public class CommonConsentValidationUtil {
 
     public static JSONObject getIdempotencyHeaderJSON(String xRequestID) {
         JSONObject idempotencyHeader = new JSONObject();
-        idempotencyHeader.put(ConsentExtensionConstants.X_REQUEST_ID_PROPER_CASE_HEADER, xRequestID);
+        idempotencyHeader.put(CommonConstants.X_REQUEST_ID_PROPER_CASE_HEADER, xRequestID);
         return idempotencyHeader;
     }
 
@@ -769,10 +768,10 @@ public class CommonConsentValidationUtil {
         // Set revocation response data
         StoredBasicConsentResourceData consentData = requestBody.getData().getConsentResource();
         SuccessResponseConsentRevocationData responseData = new SuccessResponseConsentRevocationData();
-        if (consentData.getType().contains(ConsentExtensionConstants.PAYMENTS)) {
-            responseData.setRevocationStatusName(TransactionStatusEnum.CANC.name());
+        if (consentData.getType().contains(CommonConstants.PAYMENTS)) {
+            responseData.setRevocationStatusName(ExtensionEnums.TransactionStatusEnum.CANC.name());
         } else {
-            responseData.setRevocationStatusName(ConsentStatusEnum.TERMINATED_BY_TPP.toString());
+            responseData.setRevocationStatusName(ExtensionEnums.ConsentStatusEnum.TERMINATED_BY_TPP.toString());
         }
         responseData.setRequireTokenRevocation(getIfRequireTokenRevocation(consentData));
 
@@ -788,13 +787,13 @@ public class CommonConsentValidationUtil {
      */
     private static String getIfRequireTokenRevocation(StoredBasicConsentResourceData consentData) {
         // Check if consent is authorized
-        if (ConsentStatusEnum.VALID.toString().equals(consentData.getStatus())) {
+        if (ExtensionEnums.ConsentStatusEnum.VALID.toString().equals(consentData.getStatus())) {
             return "true";
         }
 
         // Check if a valid token can exist for transaction
         //ToDo: Verify that these are the only statuses of transaction where a token revocation would be necessary
-        if (TransactionStatusEnum.ACCP.name().equals(consentData.getStatus())) {
+        if (ExtensionEnums.TransactionStatusEnum.ACCP.name().equals(consentData.getStatus())) {
             return "true";
         }
 
@@ -806,11 +805,11 @@ public class CommonConsentValidationUtil {
      *
      * @param requestBody consent revocation request body
      * @return success response for consent revocation
-     * @throws BadRequestException if the request body is malformed
+     * @throws ExtensionException if the request body is malformed
      * @throws ValidationFailureException if consent revocation request fails validations
      */
     public static SuccessResponseConsentRevocation
-    validateRevokeRequestAndReturnResponse(PreProcessConsentRequestBody requestBody) throws BadRequestException,
+    validateRevokeRequestAndReturnResponse(PreProcessConsentRequestBody requestBody) throws ExtensionException,
             ValidationFailureException {
         String requestId = requestBody.getRequestId();
 
@@ -834,7 +833,8 @@ public class CommonConsentValidationUtil {
             requestClientId = headers.getString(CommonConstants.X_WSO2_CLIENT_ID_KEY);
         } catch (JSONException e) {
             // Should be unreachable (since insequence always adds client id header)
-            throw new BadRequestException("x-wso2-client-id header not found");
+            throw new ExtensionException(Response.Status.BAD_REQUEST, "invalid_request",
+                    "x-wso2-client-id header not found");
         }
         CommonConsentValidationUtil.validateClient(requestClientId, data.getConsentResource().getClientId());
 
@@ -849,8 +849,8 @@ public class CommonConsentValidationUtil {
         CommonConsentValidationUtil.validateIfConsentTypeIsRevocable(consentType);
 
         log.debug("[" + requestId + "] " + "Verify if the consent is already revoked");
-        if (StringUtils.equals(ConsentStatusEnum.REVOKED_BY_PSU.toString(), consentResource.getStatus())
-                || StringUtils.equals(ConsentStatusEnum.TERMINATED_BY_TPP.toString(),
+        if (StringUtils.equals(ExtensionEnums.ConsentStatusEnum.REVOKED_BY_PSU.toString(), consentResource.getStatus())
+                || StringUtils.equals(ExtensionEnums.ConsentStatusEnum.TERMINATED_BY_TPP.toString(),
                 consentResource.getStatus())) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.UNAUTHORIZED,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
@@ -858,7 +858,7 @@ public class CommonConsentValidationUtil {
         }
 
         // Check whether the consent is already expired before deleting
-        if (StringUtils.equals(ConsentStatusEnum.EXPIRED.toString(), consentResource.getStatus())) {
+        if (StringUtils.equals(ExtensionEnums.ConsentStatusEnum.EXPIRED.toString(), consentResource.getStatus())) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.UNAUTHORIZED,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.CONSENT_INVALID, ErrorConstants.CONSENT_ALREADY_EXPIRED));
@@ -874,8 +874,8 @@ public class CommonConsentValidationUtil {
      * @throws ValidationFailureException if consent is irrevocable
      */
     private static void validateIfConsentTypeIsRevocable(String consentType)
-            throws ValidationFailureException, BadRequestException {
-        if (ConsentTypeEnum.PAYMENTS.toString().equals(consentType)) {
+            throws ValidationFailureException, ExtensionException {
+        if (ExtensionEnums.ConsentTypeEnum.PAYMENTS.toString().equals(consentType)) {
             throw new ValidationFailureException(ValidationFailureException.ErrorCode.METHOD_NOT_ALLOWED,
                     ErrorUtil.constructBerlinError(null, TPPMessage.CategoryEnum.ERROR,
                             TPPMessage.CodeEnum.CANCELLATION_INVALID,
@@ -939,7 +939,7 @@ public class CommonConsentValidationUtil {
      * @throws ValidationFailureException   if deserialization or validation fails
      */
     public static <T> T validateJSONFromModel(String jsonPayload, Class<T> modelClass)
-            throws ValidationFailureException, BadRequestException {
+            throws ValidationFailureException, ExtensionException {
         T mappedObject;
 
         // Map to object

@@ -1,6 +1,6 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.validators.impl;
 
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.AccountAccess;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.CommonConsentValidationUtil;
@@ -44,23 +44,23 @@ public class AccountAccessValidator implements ConstraintValidator<ValidAccountA
 
         // Validate permission configurations
         if (hasPermissions) {
-            if (ConsentExtensionConstants.ALL_ACCOUNTS.equals(access.getAvailableAccounts())
-                    || ConsentExtensionConstants.ALL_ACCOUNTS_WITH_OWNER_NAME.equals(access.getAvailableAccounts())) {
+            if (CommonConstants.ALL_ACCOUNTS.equals(access.getAvailableAccounts())
+                    || CommonConstants.ALL_ACCOUNTS_WITH_OWNER_NAME.equals(access.getAvailableAccounts())) {
                 if (access.getAvailableAccountsWithBalances() != null || access.getAllPsd2() != null) {
                     CommonConsentValidationUtil.setConstrainViolation(context,
                             CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.INVALID_PERMISSION));
                 }
             }
-            if (ConsentExtensionConstants.ALL_ACCOUNTS.equals(access.getAvailableAccountsWithBalances())
-                    || ConsentExtensionConstants.ALL_ACCOUNTS_WITH_OWNER_NAME
+            if (CommonConstants.ALL_ACCOUNTS.equals(access.getAvailableAccountsWithBalances())
+                    || CommonConstants.ALL_ACCOUNTS_WITH_OWNER_NAME
                     .equals(access.getAvailableAccountsWithBalances())) {
                 if (access.getAvailableAccounts() != null || access.getAllPsd2() != null) {
                     CommonConsentValidationUtil.setConstrainViolation(context,
                             CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.INVALID_PERMISSION));
                 }
             }
-            if (ConsentExtensionConstants.ALL_ACCOUNTS.equals(access.getAllPsd2())
-                    || ConsentExtensionConstants.ALL_ACCOUNTS_WITH_OWNER_NAME.equals(access.getAllPsd2())) {
+            if (CommonConstants.ALL_ACCOUNTS.equals(access.getAllPsd2())
+                    || CommonConstants.ALL_ACCOUNTS_WITH_OWNER_NAME.equals(access.getAllPsd2())) {
                 if (access.getAvailableAccounts() != null || access.getAvailableAccountsWithBalances() != null) {
                     CommonConsentValidationUtil.setConstrainViolation(context,
                             CommonConsentValidationUtil.buildViolationMessage(ErrorConstants.INVALID_PERMISSION));

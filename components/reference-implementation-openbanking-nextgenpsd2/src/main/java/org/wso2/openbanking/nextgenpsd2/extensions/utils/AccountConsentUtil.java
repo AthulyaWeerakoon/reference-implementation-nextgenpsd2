@@ -20,15 +20,15 @@ package org.wso2.openbanking.nextgenpsd2.extensions.utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.wso2.openbanking.nextgenpsd2.extensions.constants.ConsentExtensionConstants;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.CommonConstants;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.enums.ConsentTypeEnum;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
+import org.wso2.openbanking.nextgenpsd2.extensions.constants.ExtensionEnums;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredBasicConsentResourceData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.StoredDetailedConsentResourceData;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.ScaMethod;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredBasicConsentResourceData;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.StoredDetailedConsentResourceData;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -54,10 +54,10 @@ public class AccountConsentUtil {
      */
     public static void appendAccountInitiationResponseToPayload(StoredDetailedConsentResourceData createdConsent,
                                                                 ArrayList<ScaMethod> scaMethods, JSONObject payload)
-            throws BadRequestException {
+            throws ExtensionException {
 
-        payload.put(ConsentExtensionConstants.CONSENT_STATUS, createdConsent.getStatus());
-        payload.put(ConsentExtensionConstants.CONSENT_ID, createdConsent.getId());
+        payload.put(CommonConstants.CONSENT_STATUS, createdConsent.getStatus());
+        payload.put(CommonConstants.CONSENT_ID, createdConsent.getId());
 
         JSONArray chosenSCAMethods = new JSONArray();
         for (ScaMethod scaMethod : scaMethods) {
@@ -65,9 +65,9 @@ public class AccountConsentUtil {
         }
 
         if (scaMethods.size() > 1) {
-            payload.put(ConsentExtensionConstants.SCA_METHODS, chosenSCAMethods);
+            payload.put(CommonConstants.SCA_METHODS, chosenSCAMethods);
         } else if (scaMethods.size() == 1) {
-            payload.put(ConsentExtensionConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
+            payload.put(CommonConstants.CHOSEN_SCA_METHOD, chosenSCAMethods.get(0));
         }
     }
 
@@ -77,12 +77,12 @@ public class AccountConsentUtil {
      * @param date date in string format
      * @return date/time after converting to UTC timestamp
      */
-    public static long convertToUtcTimestamp(String date) throws ValidationFailureException, BadRequestException {
+    public static long convertToUtcTimestamp(String date) throws ValidationFailureException, ExtensionException {
 
         LocalDate localDate = CommonConsentValidationUtil.parseDateToISO(date,
                 TPPMessage.CodeEnum.FORMAT_ERROR, ErrorConstants.VALID_UNTIL_DATE_INVALID);
         LocalDateTime localDateTime = localDate.atStartOfDay();
-        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(ConsentExtensionConstants.UTC));
+        ZonedDateTime zonedDateTime = localDateTime.atZone(ZoneId.of(CommonConstants.UTC));
 
         // Retrieve the UTC timestamp in long.
         return Instant.from(zonedDateTime).getEpochSecond();
@@ -113,7 +113,7 @@ public class AccountConsentUtil {
                                                        JSONObject payloadToSend) {
 
         AccountConsentUtil.addAdditionalAccountConsentAttributes(retrievedConsent, payloadToSend);
-        payloadToSend.put(ConsentExtensionConstants.LINKS, getAccountConsentGetLinks());
+        payloadToSend.put(CommonConstants.LINKS, getAccountConsentGetLinks());
     }
 
     /**
@@ -125,12 +125,13 @@ public class AccountConsentUtil {
 
         JSONObject links = new JSONObject();
 
-        String apiVersion = CommonConsentValidationUtil.getApiVersion(ConsentTypeEnum.ACCOUNTS.toString());
+        String apiVersion = CommonConsentValidationUtil.getApiVersion(
+                ExtensionEnums.ConsentTypeEnum.ACCOUNTS.toString());
 
         JSONObject account = new JSONObject();
-        account.put(ConsentExtensionConstants.HREF,
-                String.format(ConsentExtensionConstants.ACCOUNTS_LINK_TEMPLATE, apiVersion));
-        links.put(ConsentExtensionConstants.ACCOUNT, account);
+        account.put(CommonConstants.HREF,
+                String.format(CommonConstants.ACCOUNTS_LINK_TEMPLATE, apiVersion));
+        links.put(CommonConstants.ACCOUNT, account);
 
         return links;
     }
@@ -143,12 +144,12 @@ public class AccountConsentUtil {
     public static void addAdditionalAccountConsentAttributes(StoredBasicConsentResourceData retrievedConsent,
                                                              JSONObject payloadToSend) {
 
-        payloadToSend.put(ConsentExtensionConstants.CONSENT_STATUS, retrievedConsent.getStatus());
+        payloadToSend.put(CommonConstants.CONSENT_STATUS, retrievedConsent.getStatus());
 
         Date currentDate = new Date(retrievedConsent.getUpdatedTime() * 1000L);
-        DateFormat dateFormat = new SimpleDateFormat(ConsentExtensionConstants.DATE_FORMAT);
+        DateFormat dateFormat = new SimpleDateFormat(CommonConstants.DATE_FORMAT);
         String lastActionDate = dateFormat.format(currentDate);
 
-        payloadToSend.put(ConsentExtensionConstants.LAST_ACTION_DATE, lastActionDate);
+        payloadToSend.put(CommonConstants.LAST_ACTION_DATE, lastActionDate);
     }
 }

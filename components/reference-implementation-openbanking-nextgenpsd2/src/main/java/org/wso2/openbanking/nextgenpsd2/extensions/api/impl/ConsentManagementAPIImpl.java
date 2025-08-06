@@ -23,17 +23,16 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wso2.openbanking.nextgenpsd2.extensions.constants.ErrorConstants;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.BadRequestException;
-import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ServerErrorException;
+import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ExtensionException;
 import org.wso2.openbanking.nextgenpsd2.extensions.exceptions.ValidationFailureException;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.EnrichConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentCreationRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.PreProcessConsentRequestBody;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseConsentRevocation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponseForResponseAlternation;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponsePreProcessConsentCreation;
 import org.wso2.openbanking.nextgenpsd2.extensions.handlers.ConsentManagementValidationHandler;
 import org.wso2.openbanking.nextgenpsd2.extensions.model.TPPMessage;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.EnrichConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentCreationRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.PreProcessConsentRequestBody;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseConsentRevocation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponseForResponseAlternation;
-import org.wso2.openbanking.nextgenpsd2.extensions.model.generated.SuccessResponsePreProcessConsentCreation;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.CommonConsentValidationUtil;
 import org.wso2.openbanking.nextgenpsd2.extensions.utils.ErrorUtil;
 
@@ -61,7 +60,7 @@ public class ConsentManagementAPIImpl {
 
             return Response.ok().entity(new JSONObject(validationResponse).toString()).build();
 
-        } catch (BadRequestException | ServerErrorException e) {
+        } catch (ExtensionException e) {
             log.error("[" + requestId + "] " + "An error occurred enriching consent creation response.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
         } catch (ValidationFailureException e) {
@@ -125,7 +124,7 @@ public class ConsentManagementAPIImpl {
                     e);
             return Response.ok().entity(e.getFormattedErrorAsString()).build();
 
-        }  catch (BadRequestException | ServerErrorException e) {
+        }  catch (ExtensionException e) {
             log.error("[" + requestId + "] " + "An error occurred creating consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
         }
@@ -157,7 +156,7 @@ public class ConsentManagementAPIImpl {
                     e);
             return Response.ok().entity(e.getFormattedErrorAsString()).build();
 
-        }  catch (BadRequestException | ServerErrorException e) {
+        }  catch (ExtensionException e) {
             log.error("[" + requestId + "] " + "An error occurred retrieving consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
         }
@@ -189,7 +188,7 @@ public class ConsentManagementAPIImpl {
                             "response.", e);
             return Response.ok().entity(e.getFormattedErrorAsString()).build();
 
-        }  catch (BadRequestException | ServerErrorException e) {
+        }  catch (ExtensionException e) {
             log.error("[" + requestId + "] " + "An error occurred revoking consent.", e);
             return Response.status(e.getStatus()).entity(e.getFormattedErrorAsString()).build();
         }
