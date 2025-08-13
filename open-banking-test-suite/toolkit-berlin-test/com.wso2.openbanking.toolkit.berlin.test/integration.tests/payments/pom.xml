@@ -81,12 +81,14 @@
             <artifactId>java-uuid-generator</artifactId>
             <scope>test</scope>
         </dependency>
+<!--
         <dependency>
             <groupId>com.wso2.openbanking</groupId>
             <artifactId>com.wso2.openbanking.toolkit.berlin.integration.test.accounts</artifactId>
             <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
+-->
     </dependencies>
     <build>
         <plugins>

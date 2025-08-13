@@ -37,6 +37,7 @@
     <modules>
         <module>components/reference-implementation-openbanking-nextgenpsd2</module>
         <module>components/reference-implementation-demo-backend</module>
+        <module>open-banking-test-suite</module>
     </modules>
 
     <profiles>
