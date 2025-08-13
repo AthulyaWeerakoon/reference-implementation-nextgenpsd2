@@ -32,10 +32,11 @@
     </parent>
 
     <name>WSO2 Open Banking Parent</name>
-    <description>Reference Implementation for Open Banking Berlin Specification</description>
+    <description>Reference Implementation for Open Banking NextGenPSD2 Specification</description>
 
     <modules>
         <module>components/reference-implementation-openbanking-nextgenpsd2</module>
+        <module>components/reference-implementation-demo-backend</module>
     </modules>
 
     <profiles>
