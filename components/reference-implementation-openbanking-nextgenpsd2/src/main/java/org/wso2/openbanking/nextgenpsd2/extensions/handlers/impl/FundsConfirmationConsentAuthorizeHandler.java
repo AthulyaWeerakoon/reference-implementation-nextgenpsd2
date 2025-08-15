@@ -53,9 +53,8 @@ public class FundsConfirmationConsentAuthorizeHandler implements ConsentAuthoriz
     /**
      * Return consent data for confirmation of funds consents.
      *
-     * @param responseData
-     * @param requestData
-     * @throws AuthorizationFailureException
+     * @param responseData data of the response object to populate consent authorize screen for CoF consents
+     * @param requestData data of the request made to populate-consent-authorize-screen for CoF consents
      */
     @Override
     public void populateBasicConsentData(SuccessResponsePopulateConsentAuthorizeScreenData responseData,
@@ -73,9 +72,8 @@ public class FundsConfirmationConsentAuthorizeHandler implements ConsentAuthoriz
     /**
      * Return consumer data for confirmation of funds consents.
      *
-     * @param responseData
-     * @param requestData
-     * @throws AuthorizationFailureException
+     * @param responseData data of the response object to populate consent authorize screen for CoF consents
+     * @param requestData data of the request made to populate-consent-authorize-screen for CoF consents
      */
     @Override
     public void populateAccountsData(SuccessResponsePopulateConsentAuthorizeScreenData responseData,
@@ -100,12 +98,9 @@ public class FundsConfirmationConsentAuthorizeHandler implements ConsentAuthoriz
     /**
      * Returns authorizations and account mappings for account consent persistence.
      *
-     * @param requestBody
-     * @param authorizingResource
-     * @return
-     * @throws AuthorizationFailureException
-     * @throws ExtensionException
-     * @throws ExtensionException
+     * @param requestBody body of the request received by persist-authorized-consent for CoF consents
+     * @param authorizingResource authorization resource being authorized for CoF consents
+     * @return amended CoF consent resource
      */
     @Override
     public DetailedConsentResourceDataWithAmendments getAmendedConsentResource(

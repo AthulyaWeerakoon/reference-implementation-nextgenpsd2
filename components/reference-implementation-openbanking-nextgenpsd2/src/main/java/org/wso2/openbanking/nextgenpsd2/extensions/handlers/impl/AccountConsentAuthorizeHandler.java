@@ -58,9 +58,8 @@ public class AccountConsentAuthorizeHandler implements ConsentAuthorizationHandl
     /**
      * Return consent data for account consents.
      *
-     * @param responseData
-     * @param requestData
-     * @throws AuthorizationFailureException
+     * @param responseData data of the response object to populate consent authorize screen for account consents
+     * @param requestData data of the request made to populate-consent-authorize-screen for account consents
      */
     @Override
     public void populateBasicConsentData(SuccessResponsePopulateConsentAuthorizeScreenData responseData,
@@ -78,9 +77,8 @@ public class AccountConsentAuthorizeHandler implements ConsentAuthorizationHandl
     /**
      * Return consumer data for account consents.
      *
-     * @param responseData
-     * @param requestData
-     * @throws AuthorizationFailureException
+     * @param responseData data of the response object to populate consent authorize screen for account consents
+     * @param requestData data of the request made to populate-consent-authorize-screen for account consents
      */
     @Override
     public void populateAccountsData(SuccessResponsePopulateConsentAuthorizeScreenData responseData,
@@ -133,11 +131,9 @@ public class AccountConsentAuthorizeHandler implements ConsentAuthorizationHandl
     /**
      * Returns authorizations and account mappings for account consent persistence.
      *
-     * @param requestBody
-     * @param authorizingResource
-     * @return
-     * @throws AuthorizationFailureException
-     * @throws ExtensionException
+     * @param requestBody body of the request received by persist-authorized-consent for account consents
+     * @param authorizingResource authorization resource being authorized for account consents
+     * @return amended account consent resource
      */
     @Override
     public DetailedConsentResourceDataWithAmendments getAmendedConsentResource(

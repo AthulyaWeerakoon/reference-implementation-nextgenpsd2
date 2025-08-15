@@ -1,10 +1,14 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.generated.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.FailedResponseInConsentAuthorize;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.FailedResponseInConsentAuthorizeData;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.SuccessResponsePopulateConsentAuthorizeScreen;
 import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 @JsonTypeName("Response200ForPopulateConsentAuthorizeScreen")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-07-14T12:25:16.039700400+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-08-14T10:51:10.584795800+05:30[Asia/Colombo]", comments = "Generator version: 7.14.0")
 public class Response200ForPopulateConsentAuthorizeScreen   {
   private String responseId;
   public enum StatusEnum {

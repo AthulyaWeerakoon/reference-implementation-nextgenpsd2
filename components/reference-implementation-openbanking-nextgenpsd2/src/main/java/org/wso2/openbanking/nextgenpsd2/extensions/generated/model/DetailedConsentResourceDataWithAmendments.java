@@ -1,18 +1,26 @@
 package org.wso2.openbanking.nextgenpsd2.extensions.generated.model;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.AmendedAuthorization;
+import org.wso2.openbanking.nextgenpsd2.extensions.generated.model.Authorization;
+import javax.validation.constraints.*;
 import javax.validation.Valid;
 
+import io.swagger.annotations.*;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 
 
 @JsonTypeName("DetailedConsentResourceDataWithAmendments")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-05-05T12:44:23.299724+05:30[Asia/Colombo]", comments = "Generator version: 7.12.0")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.JavaJAXRSSpecServerCodegen", date = "2025-08-14T10:51:10.584795800+05:30[Asia/Colombo]", comments = "Generator version: 7.14.0")
 public class DetailedConsentResourceDataWithAmendments   {
   private String type;
   private String status;
